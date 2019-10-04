@@ -1,9 +1,27 @@
 package org.eventbot.service
 
 import com.google.common.base.Splitter
+import org.eventbot.callback.CallbackParams
+import org.eventbot.callback.ListGroupsByCreatorCallbackAction
+import org.eventbot.callback.ListGroupsByMemberCallbackAction
+import org.eventbot.constant.BotConstants.CALLBACK_DATA_SEPARATOR
+import org.eventbot.constant.Callback
+import org.eventbot.model.Event
+import org.eventbot.model.EventStatus
+import org.eventbot.model.EventStatus.ACCEPTED
+import org.eventbot.model.EventStatus.DECLINED
+import org.eventbot.model.EventStatus.NO_RESPONSE
+import org.eventbot.model.Group
+import org.eventbot.model.ParticipantId
+import org.eventbot.model.UserInfo
+import org.eventbot.repository.EventRepository
+import org.eventbot.repository.ParticipantRepository
+import org.eventbot.repository.TeamRepository
+import org.eventbot.repository.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -12,18 +30,8 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import org.eventbot.constant.Callback
-import org.eventbot.model.*
-import org.eventbot.repository.EventRepository
-import org.eventbot.repository.ParticipantRepository
-import org.eventbot.repository.TeamRepository
-import org.eventbot.repository.UserRepository
-
 import java.util.Date
 import java.util.UUID
-
-import org.eventbot.constant.BotConstants.CALLBACK_DATA_SEPARATOR
-import org.eventbot.model.EventStatus.*
 
 @Transactional
 @Component
@@ -44,7 +52,9 @@ open class CallbackService(
         @Autowired
         open var keyboardService: KeyboardService,
         @Autowired
-        open var participantRepository: ParticipantRepository
+        open var participantRepository: ParticipantRepository,
+        @Autowired
+        open var applicationContext: ApplicationContext
 ) {
     val LOG: Logger = LoggerFactory.getLogger(CommandService::class.java)
 
@@ -63,16 +73,16 @@ open class CallbackService(
             return
         }
 
-        var answerText: String? = null
         val user = userOpt.get()
         val chatId = callbackquery.message.chatId
 
-        when (Callback.valueOf(callbackParts[0])) {
+        val answerText: String? = when (Callback.valueOf(callbackParts[0])) {
             Callback.NEW_TEAM -> {
                 val team = newTeam(user)
                 sendJoinLink(chatId, team)
+                null
             }
-            Callback.ADD_TO_TEAM -> answerText = "ask your peers for a link"
+            Callback.ADD_TO_TEAM -> "ask your peers for a link"
             Callback.ACCEPT_DECLINE -> {
                 val eventPk = java.lang.Long.valueOf(callbackParts[1])
 
@@ -92,10 +102,19 @@ open class CallbackService(
                 val event = participant.event
                 updateEvent(event, participant.accepted)
                 updateInvite(event)
-
-                answerText = "ok"
+                "ok"
             }
             Callback.VOID -> TODO()
+            Callback.GROUPS -> applicationContext.getBean(ListGroupsByCreatorCallbackAction::class.java)
+                    .doAction(mapOf(
+                            CallbackParams.USER_INFO to user,
+                            CallbackParams.CHAT_ID to chatId
+                    ))
+            Callback.MY_GROUPS -> applicationContext.getBean(ListGroupsByMemberCallbackAction::class.java)
+                    .doAction(mapOf(
+                            CallbackParams.USER_INFO to user,
+                            CallbackParams.CHAT_ID to chatId
+                    ))
         }
         sendAnswerCallbackQuery(answerText, false, callbackquery)
     }

@@ -1,21 +1,20 @@
 package org.eventbot.event
 
-import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import org.eventbot.event.generator.PairGenerator
+import org.eventbot.event.generator.EventGenerator
 import org.eventbot.model.Event
-import org.eventbot.model.Group
 import org.eventbot.model.UserInfo
 import org.eventbot.repository.EventRepository
 import org.eventbot.service.ChatService
 import org.eventbot.service.KeyboardService
 import org.eventbot.service.MessageService
 import org.eventbot.service.TimeService
-import java.util.*
+import org.springframework.stereotype.Component
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException
+import java.util.Date
 
 @Component
 class EventOrganizer(
-        private val pairGenerator: PairGenerator,
+        private val eventGenerator: EventGenerator,
         private val eventRepository: EventRepository,
         val messageService: MessageService,
         val keyboardService: KeyboardService,
@@ -24,19 +23,20 @@ class EventOrganizer(
 ) {
     fun tryOrganizeEvent(user: UserInfo) {
 
-        val group: Group = user.group ?: return
 
-        if (hasDeclinedRecently(user) || hasUpcomingEvents(user)) {
-            sendTryLater(user)
-            return
-        }
-        val event = pairGenerator.findPair(user, group)
-
-        if (event != null) {
-            invite(user, event)
-        } else {
-            sendNoPairsAvailable(user)
-        }
+//        val groups: MutableSet<Group> = user.groups
+//
+//        if (hasDeclinedRecently(user) || hasUpcomingEvents(user)) {
+//            sendTryLater(user)
+//            return
+//        }
+//        val event = pairGenerator.findPair(user, group)
+//
+//        if (event != null) {
+//            invite(user, event)
+//        } else {
+//            sendNoPairsAvailable(user)
+//        }
     }
 
     fun hasDeclinedRecently(user: UserInfo): Boolean {

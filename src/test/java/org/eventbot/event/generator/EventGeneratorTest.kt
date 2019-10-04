@@ -1,13 +1,5 @@
 package org.eventbot.event.generator
 
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.transaction.annotation.Transactional
 import org.eventbot.Application
 import org.eventbot.constant.BotConstants.MIN_DAYS_BETWEEN_SESSIONS
 import org.eventbot.model.Event
@@ -16,16 +8,25 @@ import org.eventbot.model.UserInfo
 import org.eventbot.repository.EventRepository
 import org.eventbot.repository.TeamRepository
 import org.eventbot.repository.UserRepository
-
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.transaction.annotation.Transactional
 import java.text.SimpleDateFormat
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = [Application::class])
 @Transactional
-class PairGeneratorTest {
+class EventGeneratorTest {
 
     private val format = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
     private var sessionDate: Date? = null
@@ -35,7 +36,7 @@ class PairGeneratorTest {
     private var member_recentEvent: UserInfo? = null
 
     @Autowired
-    private val systemUnderTest: PairGenerator? = null
+    private val systemUnderTest: EventGenerator? = null
     @Autowired
     private val teamRepository: TeamRepository? = null
     @Autowired
@@ -74,7 +75,7 @@ class PairGeneratorTest {
         teamRepository!!.save(group!!)
 
         //when
-        val pair = systemUnderTest!!.findPair(user!!, group!!, sessionDate!!)
+        val pair = systemUnderTest!!.findPair(user!!, group!!)
 
         //then
         val actual = pair?.partner
@@ -89,7 +90,7 @@ class PairGeneratorTest {
         teamRepository!!.save(group!!)
 
         //when
-        val pair = systemUnderTest!!.findPair(user!!, group!!, sessionDate!!)
+        val pair = systemUnderTest!!.findPair(user!!, group!!)
 
         //then
         val actual = pair?.partner
@@ -103,7 +104,7 @@ class PairGeneratorTest {
         teamRepository!!.save(group!!)
 
         //when
-        val pair = systemUnderTest!!.findPair(user!!, group!!, sessionDate!!)
+        val pair = systemUnderTest!!.findPair(user!!, group!!)
 
         //then
         Assert.assertTrue(pair == null)

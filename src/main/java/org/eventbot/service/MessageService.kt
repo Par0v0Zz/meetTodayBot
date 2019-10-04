@@ -4,6 +4,13 @@ import com.ocpsoft.pretty.time.PrettyTime
 import freemarker.template.Configuration
 import freemarker.template.TemplateException
 import org.apache.commons.lang3.StringUtils
+import org.eventbot.model.Event
+import org.eventbot.model.EventStatus
+import org.eventbot.model.Group
+import org.eventbot.model.Participant
+import org.eventbot.model.UserInfo
+import org.eventbot.repository.ParticipantRepository
+import org.eventbot.repository.UserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
@@ -18,15 +25,14 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import org.eventbot.model.*
-import org.eventbot.repository.ParticipantRepository
-import org.eventbot.repository.UserRepository
 import java.io.IOException
 import java.io.Serializable
 import java.io.StringWriter
 import java.time.ZoneId
-import java.util.*
-import java.util.Comparator.nullsFirst
+import java.util.ArrayList
+import java.util.Date
+import java.util.HashMap
+import java.util.Optional
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KFunction2
 
@@ -262,18 +268,19 @@ class MessageService(
     }
 
     fun teamInfo(user: UserInfo): String {
-        val team = user.group
-        if (team != null) {
-            val teamList = team.members
-                    .sortedWith(nullsFirst(compareBy(UserInfo::firstName)))
-                    .joinToString(separator = "\n") { this.userLine(it) }
-
-            val teamPart = inlineLink("group", teamLink(team))
-
-            return "Your $teamPart:\n$teamList"
-        } else {
-            return "You have no group"
-        }
+        val team = user.groups
+        return ""
+//        if (team != null) {
+//            val teamList = team.members
+//                    .sortedWith(nullsFirst(compareBy(UserInfo::firstName)))
+//                    .joinToString(separator = "\n") { this.userLine(it) }
+//
+//            val teamPart = inlineLink("group", teamLink(team))
+//
+//            return "Your $teamPart:\n$teamList"
+//        } else {
+//            return "You have no group"
+//        }
     }
 
     private fun userLine(user: UserInfo): String {

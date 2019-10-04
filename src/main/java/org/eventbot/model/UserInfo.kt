@@ -3,8 +3,21 @@ package org.eventbot.model
 import org.hibernate.annotations.CacheConcurrencyStrategy
 import org.springframework.data.annotation.CreatedDate
 import java.time.ZoneId
-import java.util.*
-import javax.persistence.*
+import java.util.Date
+import java.util.HashSet
+import javax.persistence.Cacheable
+import javax.persistence.CascadeType
+import javax.persistence.Entity
+import javax.persistence.FetchType
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.JoinTable
+import javax.persistence.ManyToMany
+import javax.persistence.OneToMany
+import javax.persistence.Table
+import javax.persistence.Temporal
+import javax.persistence.TemporalType
 
 @Entity
 @Cacheable
@@ -20,8 +33,9 @@ class UserInfo(
         var lastDeclineDate: Date? = null,
         var lastMessageId: Int? = null,
         var timezone: ZoneId? = null,
-        @ManyToOne @JoinColumn(name = "team_pk", referencedColumnName = "pk")
-        var group: Group? = null,
+        @ManyToMany
+        @JoinTable(name = "user_group")
+        var groups: MutableSet<Group> = HashSet(),
 
         @Temporal(TemporalType.TIMESTAMP) @CreatedDate
         var createdDate: Date? = null,

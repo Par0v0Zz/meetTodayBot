@@ -19,6 +19,7 @@ class Group (
         var token: UUID,
         @ManyToOne @JoinColumn(name = "creator_pk", referencedColumnName = "pk")
         var creator: UserInfo,
+        var private: Boolean = true,
         @ManyToMany(mappedBy = "groups")
         var members: MutableSet<UserInfo> = HashSet(),
         @Id @GeneratedValue(strategy = GenerationType.AUTO)

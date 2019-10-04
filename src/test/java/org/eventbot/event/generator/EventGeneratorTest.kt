@@ -25,12 +25,12 @@ import java.util.concurrent.ThreadLocalRandom
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = [Application::class])
 @Transactional
-class PairGeneratorTest {
+class EventGeneratorTest {
 
     private val format = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
     @Autowired
-    private val systemUnderTest: PairGenerator? = null
+    private val systemUnderTest: EventGenerator? = null
     @Autowired
     private val groupRepository: GroupRepository? = null
     @Autowired

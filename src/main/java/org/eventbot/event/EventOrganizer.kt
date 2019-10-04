@@ -30,7 +30,7 @@ class EventOrganizer(
 //            sendTryLater(user)
 //            return
 //        }
-//        val event = pairGenerator.findPair(user, group)
+//        val event = EventGenerator.organizeLunch(user, group)
 //
 //        if (event != null) {
 //            invite(user, event)

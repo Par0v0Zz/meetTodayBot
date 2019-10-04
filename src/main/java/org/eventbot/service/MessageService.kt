@@ -251,7 +251,7 @@ class MessageService(
     }
 
     fun groupInfo(user: UserInfo): String {
-        val group = user.group
+        val group = if (user.groups.isEmpty()) null else user.groups.random()
         if (group != null) {
             val memberList = group.members
                     .sortedWith(nullsFirst(compareBy(UserInfo::firstName)))

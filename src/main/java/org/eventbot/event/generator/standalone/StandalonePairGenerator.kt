@@ -11,7 +11,7 @@ import java.util.LinkedList
 import java.util.concurrent.ThreadLocalRandom
 import java.util.stream.Collectors
 
-class StandalonePairGenerator {
+class StandaloneEventGenerator {
     private val LOG = LoggerFactory.getLogger(javaClass)
 
     fun generatePairs(members: List<Person>): List<Pair<Person, Person>> {

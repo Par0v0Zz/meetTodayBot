@@ -1,7 +1,7 @@
 package org.eventbot.event.generator
 
 import org.apache.commons.lang3.tuple.Pair
-import org.eventbot.event.generator.standalone.StandalonePairGenerator
+import org.eventbot.event.generator.standalone.StandaloneEventGenerator
 import org.eventbot.model.Person
 import org.junit.Assert
 import org.junit.Before
@@ -13,7 +13,7 @@ import java.util.HashSet
 class StandaloneEventGeneratorTest {
     private val LOG = LoggerFactory.getLogger(javaClass)
 
-    private val systemUnderTest = StandalonePairGenerator()
+    private val systemUnderTest = StandaloneEventGenerator()
 
     private var members: MutableList<Person>? = null
 

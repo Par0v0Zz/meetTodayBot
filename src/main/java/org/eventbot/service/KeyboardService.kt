@@ -19,7 +19,15 @@ import java.util.Arrays
 @Component
 class KeyboardService {
     val startKeyboard: InlineKeyboardMarkup
-        get() = getOneRowKeyboard(button("New group", Callback.NEW_TEAM.toString()))
+        get() = getOneRowKeyboard(
+                button(
+                        "New public group",
+                        Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.NEW_GROUP.toString(), java.lang.Boolean.FALSE)
+                ),
+                button(
+                        "New private group",
+                        Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.NEW_GROUP.toString(), java.lang.Boolean.TRUE)
+                ))
 
     val removeKeyboardMarkup: InlineKeyboardMarkup
         get() = getOneRowKeyboard()

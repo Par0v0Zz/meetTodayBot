@@ -77,12 +77,13 @@ open class CallbackService(
         val chatId = callbackquery.message.chatId
 
         val answerText: String? = when (Callback.valueOf(callbackParts[0])) {
-            Callback.NEW_TEAM -> {
-                val group = newTeam(user)
+            Callback.NEW_GROUP -> {
+                val private = java.lang.Boolean.valueOf(callbackParts[1])
+                val group = newGroup(user, private)
                 sendJoinLink(chatId, group)
                 null
             }
-            Callback.ADD_TO_TEAM -> "ask your peers for a link"
+            Callback.ADD_TO_GROUP -> "ask your peers for a link"
             Callback.ACCEPT_DECLINE -> {
                 val eventPk = java.lang.Long.valueOf(callbackParts[1])
 
@@ -140,10 +141,11 @@ open class CallbackService(
                 keyboardService::acceptedInviteKeyboard)
     }
 
-    open fun newTeam(creator: UserInfo): Group {
+    open fun newGroup(creator: UserInfo, private: Boolean): Group {
         val group = Group(
                 UUID.randomUUID(),
-                creator
+                creator,
+                private
         )
         group.addMember(creator)
 //        group.addMember(newDummyUser())

@@ -1,6 +1,20 @@
 package org.eventbot.service
 
 import com.google.common.base.Splitter
+import org.eventbot.constant.BotConstants.CALLBACK_DATA_SEPARATOR
+import org.eventbot.constant.Callback
+import org.eventbot.model.Event
+import org.eventbot.model.EventStatus
+import org.eventbot.model.EventStatus.ACCEPTED
+import org.eventbot.model.EventStatus.DECLINED
+import org.eventbot.model.EventStatus.NO_RESPONSE
+import org.eventbot.model.Group
+import org.eventbot.model.ParticipantId
+import org.eventbot.model.UserInfo
+import org.eventbot.repository.EventRepository
+import org.eventbot.repository.GroupRepository
+import org.eventbot.repository.ParticipantRepository
+import org.eventbot.repository.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,18 +26,8 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import org.eventbot.constant.Callback
-import org.eventbot.model.*
-import org.eventbot.repository.EventRepository
-import org.eventbot.repository.ParticipantRepository
-import org.eventbot.repository.TeamRepository
-import org.eventbot.repository.UserRepository
-
 import java.util.Date
 import java.util.UUID
-
-import org.eventbot.constant.BotConstants.CALLBACK_DATA_SEPARATOR
-import org.eventbot.model.EventStatus.*
 
 @Transactional
 @Component
@@ -36,7 +40,7 @@ open class CallbackService(
         @Autowired
         open var eventRepository: EventRepository,
         @Autowired
-        open var teamRepository: TeamRepository,
+        open var groupRepository: GroupRepository,
         @Autowired
         open var messageService: MessageService,
         @Autowired
@@ -68,11 +72,12 @@ open class CallbackService(
         val chatId = callbackquery.message.chatId
 
         when (Callback.valueOf(callbackParts[0])) {
-            Callback.NEW_TEAM -> {
-                val team = newTeam(user)
+            Callback.NEW_GROUP -> {
+                val private = java.lang.Boolean.valueOf(callbackParts[1])
+                val team = newGroup(user, private)
                 sendJoinLink(chatId, team)
             }
-            Callback.ADD_TO_TEAM -> answerText = "ask your peers for a link"
+            Callback.ADD_TO_GROUP -> answerText = "ask your peers for a link"
             Callback.ACCEPT_DECLINE -> {
                 val eventPk = java.lang.Long.valueOf(callbackParts[1])
 
@@ -121,16 +126,17 @@ open class CallbackService(
                 keyboardService::acceptedInviteKeyboard)
     }
 
-    open fun newTeam(creator: UserInfo): Group {
+    open fun newGroup(creator: UserInfo, private: Boolean): Group {
         val team = Group(
                 UUID.randomUUID(),
-                creator
+                creator,
+                private
         )
         team.addMember(creator)
 //        group.addMember(newDummyUser())
 
         //todo: change to one save with cascade = merge and optional save if new UserInfo ?
-        teamRepository.save(team)
+        groupRepository.save(team)
         userRepository.save(creator)
 
         return team

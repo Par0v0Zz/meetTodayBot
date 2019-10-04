@@ -6,7 +6,7 @@ import org.eventbot.model.Event
 import org.eventbot.model.Group
 import org.eventbot.model.UserInfo
 import org.eventbot.repository.EventRepository
-import org.eventbot.repository.TeamRepository
+import org.eventbot.repository.GroupRepository
 import org.eventbot.repository.UserRepository
 import org.junit.Assert
 import org.junit.Before
@@ -38,7 +38,7 @@ class EventGeneratorTest {
     @Autowired
     private val systemUnderTest: EventGenerator? = null
     @Autowired
-    private val teamRepository: TeamRepository? = null
+    private val groupRepository: GroupRepository? = null
     @Autowired
     private val eventRepository: EventRepository? = null
     @Autowired
@@ -63,7 +63,7 @@ class EventGeneratorTest {
         event = Event(user!!, member_recentEvent!!, true, recentSessionDate)
         eventRepository.save(event)
 
-        group = Group(UUID.randomUUID(), user!!)
+        group = Group(UUID.randomUUID(), user!!, false)
         group!!.addMember(user!!)
 
     }
@@ -72,7 +72,7 @@ class EventGeneratorTest {
     fun givenPartnerHasNoRecentEvents_whenFindPair_thenFound() {
         //given
         group!!.addMember(member_noRecentEvent!!)
-        teamRepository!!.save(group!!)
+        groupRepository!!.save(group!!)
 
         //when
         val pair = systemUnderTest!!.findPair(user!!, group!!)
@@ -87,7 +87,7 @@ class EventGeneratorTest {
         //given
         group!!.addMember(member_recentEvent!!)
         group!!.addMember(member_noRecentEvent!!)
-        teamRepository!!.save(group!!)
+        groupRepository!!.save(group!!)
 
         //when
         val pair = systemUnderTest!!.findPair(user!!, group!!)
@@ -101,7 +101,7 @@ class EventGeneratorTest {
     fun givenAllPartnersHaveRecentEvent_whenFindPair_thenNotFound() {
         //given
         group!!.addMember(member_recentEvent!!)
-        teamRepository!!.save(group!!)
+        groupRepository!!.save(group!!)
 
         //when
         val pair = systemUnderTest!!.findPair(user!!, group!!)

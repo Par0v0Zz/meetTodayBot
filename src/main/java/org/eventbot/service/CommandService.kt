@@ -1,5 +1,9 @@
 package org.eventbot.service
 
+import org.eventbot.constant.BotCommand
+import org.eventbot.event.EventOrganizer
+import org.eventbot.model.UserInfo
+import org.eventbot.repository.GroupRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -7,10 +11,6 @@ import org.telegram.telegrambots.meta.api.objects.EntityType
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import org.eventbot.constant.BotCommand
-import org.eventbot.event.EventOrganizer
-import org.eventbot.model.UserInfo
-import org.eventbot.repository.TeamRepository
 import java.util.Optional
 import java.util.UUID
 
@@ -22,7 +22,7 @@ open class CommandService(
         open var messageService: MessageService,
         open var keyboardService: KeyboardService,
         open var chatService: ChatService,
-        open var teamRepository: TeamRepository,
+        open var groupRepository: GroupRepository,
         open var eventOrganizer: EventOrganizer
 ) {
     private val LOG = LoggerFactory.getLogger(CommandService::class.java)
@@ -65,11 +65,11 @@ open class CommandService(
     }
 
     private fun joinTeamByToken(token: String, user: UserInfo) {
-        val teamOpt = teamRepository.findByToken(UUID.fromString(token))
+        val teamOpt = groupRepository.findByToken(UUID.fromString(token))
 
         teamOpt.ifPresent { team ->
             team.addMember(user)
-            teamRepository.save(team)
+            groupRepository.save(team)
         }
     }
 

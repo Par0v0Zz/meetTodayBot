@@ -14,11 +14,12 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "teams")
-class Group (
+class Group(
         @Column(name = "token", columnDefinition = "BINARY(16)")
         var token: UUID,
         @ManyToOne @JoinColumn(name = "creator_pk", referencedColumnName = "pk")
         var creator: UserInfo,
+        var private: Boolean,
         @ManyToMany(mappedBy = "groups")
         var members: MutableSet<UserInfo> = HashSet(),
         @Id @GeneratedValue(strategy = GenerationType.AUTO)

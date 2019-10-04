@@ -9,10 +9,8 @@ import org.vors.pairbot.model.Event
 import org.vors.pairbot.model.UserInfo
 import org.vors.pairbot.repository.EventRepository
 import org.vors.pairbot.repository.UserRepository
-
 import java.time.Duration
-import java.util.Date
-import java.util.Optional
+import java.util.*
 
 @Transactional
 @Component
@@ -39,11 +37,11 @@ open class UserService(
         return createUserInfo(userId, firstName, lastName)
     }
 
-    private fun createUserInfo(userId: Int, firstName: String, lastName: String): UserInfo {
+    private fun createUserInfo(userId: Int, firstName: String, lastName: String?): UserInfo {
         return newUserInfo(userId, firstName, lastName)
     }
 
-    private fun newUserInfo(id: Int, firstName: String, lastName: String): UserInfo {
+    private fun newUserInfo(id: Int, firstName: String, lastName: String?): UserInfo {
         return UserInfo(id, firstName, lastName, createdDate = Date())
     }
 

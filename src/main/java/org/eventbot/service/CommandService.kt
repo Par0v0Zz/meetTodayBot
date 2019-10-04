@@ -1,5 +1,9 @@
 package org.eventbot.service
 
+import org.eventbot.constant.BotCommand
+import org.eventbot.event.EventOrganizer
+import org.eventbot.model.UserInfo
+import org.eventbot.repository.TeamRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -7,10 +11,6 @@ import org.telegram.telegrambots.meta.api.objects.EntityType
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import org.eventbot.constant.BotCommand
-import org.eventbot.event.EventOrganizer
-import org.eventbot.model.UserInfo
-import org.eventbot.repository.TeamRepository
 import java.util.Optional
 import java.util.UUID
 
@@ -57,9 +57,19 @@ open class CommandService(
                 BotCommand.LUNCH -> {
                     eventOrganizer.tryOrganizeEvent(user)
                 }
-                BotCommand.GROUPS -> messageService.sendMessage(chatId, messageService.teamInfo(user))
                 BotCommand.SET_LOCATION -> messageService.requestLocation(chatId)
                 BotCommand.VOID -> TODO()
+                BotCommand.INFO -> {
+                    val sendMessage = messageService.getMessageWithKeyboard(
+                            chatId,
+                            "Select desired group",
+                            keyboardService.infoOptionsKeyboard())
+                    messageService.sendMessage(sendMessage)
+                }
+                BotCommand.MY_GROUPS -> {
+
+                }
+                BotCommand.GROUPS -> messageService.sendMessage(chatId, messageService.teamInfo(user))
             }
         }
     }

@@ -1,24 +1,20 @@
 package org.eventbot.service
 
 import com.google.common.base.Joiner
-import org.apache.commons.lang3.BooleanUtils
+import org.eventbot.constant.BotConstants.CALLBACK_DATA_SEPARATOR
+import org.eventbot.constant.Callback
+import org.eventbot.model.Event
+import org.eventbot.model.EventStatus.DECLINED
+import org.eventbot.model.EventStatus.NO_RESPONSE
+import org.eventbot.model.Participant
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
-import org.eventbot.constant.Callback
-import org.eventbot.model.Event
-import org.eventbot.model.Participant
-
 import java.util.ArrayList
 import java.util.Arrays
-
-import org.eventbot.constant.BotConstants.CALLBACK_DATA_SEPARATOR
-import org.eventbot.model.EventStatus
-import org.eventbot.model.EventStatus.DECLINED
-import org.eventbot.model.EventStatus.NO_RESPONSE
 
 @Component
 class KeyboardService {
@@ -27,6 +23,13 @@ class KeyboardService {
 
     val removeKeyboardMarkup: InlineKeyboardMarkup
         get() = getOneRowKeyboard()
+
+    fun infoOptionsKeyboard(): InlineKeyboardMarkup {
+        return getOneRowKeyboard(
+                button("All groups", "GROUPS"),
+                button("Groups created by me", "MY_GROUPS")
+        )
+    }
 
     fun getInviteKeyboard(event: Event): InlineKeyboardMarkup {
         return getOneRowKeyboard(

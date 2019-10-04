@@ -1,5 +1,5 @@
 # backlog
-* pair -> lunch
+* pair -> lunch - ip Sergey
 * team -> group
 * user *-* team many-to-many
 * group: public/private

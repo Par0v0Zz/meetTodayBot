@@ -1,9 +1,9 @@
 package org.eventbot.service
 
 import com.google.common.base.Splitter
+import org.eventbot.callback.AllGroupsCallbackAction
 import org.eventbot.callback.CallbackParams
-import org.eventbot.callback.ListGroupsByCreatorCallbackAction
-import org.eventbot.callback.ListGroupsByMemberCallbackAction
+import org.eventbot.callback.MyGroupsCallbackAction
 import org.eventbot.constant.BotConstants.CALLBACK_DATA_SEPARATOR
 import org.eventbot.constant.Callback
 import org.eventbot.model.Event
@@ -106,12 +106,12 @@ open class CallbackService(
                 "ok"
             }
             Callback.VOID -> TODO()
-            Callback.GROUPS -> applicationContext.getBean(ListGroupsByCreatorCallbackAction::class.java)
+            Callback.ALL_GROUPS -> applicationContext.getBean(AllGroupsCallbackAction::class.java)
                     .doAction(mapOf(
                             CallbackParams.USER_INFO to user,
                             CallbackParams.CHAT_ID to chatId
                     ))
-            Callback.MY_GROUPS -> applicationContext.getBean(ListGroupsByMemberCallbackAction::class.java)
+            Callback.MY_GROUPS -> applicationContext.getBean(MyGroupsCallbackAction::class.java)
                     .doAction(mapOf(
                             CallbackParams.USER_INFO to user,
                             CallbackParams.CHAT_ID to chatId

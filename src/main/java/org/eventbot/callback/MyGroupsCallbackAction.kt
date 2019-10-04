@@ -7,7 +7,7 @@ import org.eventbot.service.MessageService
 import org.springframework.stereotype.Component
 
 @Component
-class ListGroupsByCreatorCallbackAction(
+class MyGroupsCallbackAction(
         private val GroupRepository: GroupRepository,
         private val messageService: MessageService
 ) : CallbackAction {
@@ -17,7 +17,11 @@ class ListGroupsByCreatorCallbackAction(
                 .map { it.token } // TODO: replace by names
                 .joinToString("\n")
 
-        messageService.sendMessage(context[CallbackParams.CHAT_ID] as Long, listOfGroups)
+        if (listOfGroups.isEmpty()) {
+            messageService.sendMessage(context[CallbackParams.CHAT_ID] as Long, "No groups found")
+        } else {
+            messageService.sendMessage(context[CallbackParams.CHAT_ID] as Long, listOfGroups)
+        }
 
         return ""
     }

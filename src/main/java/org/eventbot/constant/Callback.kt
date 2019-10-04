@@ -5,6 +5,6 @@ enum class Callback {
     NEW_GROUP,
     ACCEPT_DECLINE,
     VOID,
-    GROUPS,
+    ALL_GROUPS,
     MY_GROUPS
 }

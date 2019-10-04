@@ -34,8 +34,8 @@ class KeyboardService {
 
     fun infoOptionsKeyboard(): InlineKeyboardMarkup {
         return getOneRowKeyboard(
-                button("All groups", "GROUPS"),
-                button("Groups created by me", "MY_GROUPS")
+                button("All groups", Callback.ALL_GROUPS.toString()),
+                button("My groups", Callback.MY_GROUPS.toString())
         )
     }
 

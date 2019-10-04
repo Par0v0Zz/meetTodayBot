@@ -3,8 +3,8 @@ package org.eventbot.service
 import org.eventbot.constant.BotCommand
 import org.eventbot.event.EventOrganizer
 import org.eventbot.model.UserInfo
-import org.eventbot.repository.GroupRepository
 import org.eventbot.repository.UserRepository
+import org.eventbot.repository.GroupRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -66,6 +66,7 @@ open class CommandService(
                             keyboardService.infoOptionsKeyboard())
                     messageService.sendMessage(sendMessage)
                 }
+                BotCommand.PUBLIC_GROUPS -> messageService.sendMessage(chatId, messageService.publicGroupsInfo())
             }
         }
     }

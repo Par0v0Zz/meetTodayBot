@@ -4,6 +4,14 @@ import com.ocpsoft.pretty.time.PrettyTime
 import freemarker.template.Configuration
 import freemarker.template.TemplateException
 import org.apache.commons.lang3.StringUtils
+import org.eventbot.model.Event
+import org.eventbot.model.EventStatus
+import org.eventbot.model.Group
+import org.eventbot.model.Participant
+import org.eventbot.model.UserInfo
+import org.eventbot.repository.GroupRepository
+import org.eventbot.repository.ParticipantRepository
+import org.eventbot.repository.UserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
@@ -18,15 +26,15 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import org.eventbot.model.*
-import org.eventbot.repository.ParticipantRepository
-import org.eventbot.repository.UserRepository
 import java.io.IOException
 import java.io.Serializable
 import java.io.StringWriter
 import java.time.ZoneId
-import java.util.*
+import java.util.ArrayList
 import java.util.Comparator.nullsFirst
+import java.util.Date
+import java.util.HashMap
+import java.util.Optional
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KFunction2
 
@@ -44,6 +52,7 @@ class MessageService(
         var chatService: ChatService,
         var userRepository: UserRepository,
         var participantRepository: ParticipantRepository,
+        var groupRepository: GroupRepository,
         var gameService: GameService
 ) {
     companion object {
@@ -263,6 +272,16 @@ class MessageService(
         } else {
             return "You have no group"
         }
+    }
+
+    fun publicGroupsInfo(): String {
+        val groups = groupRepository.findAllPublicGroups()
+        val groupList = groups
+                .joinToString(separator = "\n") { this.inlineLink(it.name ?: "unnamed group", groupLink(it)) }
+
+//        val groupInlineLink = inlineLink("group", groupLink(group))
+
+        return "Found public groups:\n$groupList\nFeel free to join! :)"
     }
 
     private fun userLine(user: UserInfo): String {

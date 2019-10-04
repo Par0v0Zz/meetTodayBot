@@ -30,6 +30,13 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
+import org.eventbot.constant.Callback
+import org.eventbot.model.*
+import org.eventbot.repository.EventRepository
+import org.eventbot.repository.ParticipantRepository
+import org.eventbot.repository.GroupRepository
+import org.eventbot.repository.UserRepository
+
 import java.util.Date
 import java.util.UUID
 
@@ -44,7 +51,7 @@ open class CallbackService(
         @Autowired
         open var eventRepository: EventRepository,
         @Autowired
-        open var teamRepository: TeamRepository,
+        open var groupRepository: GroupRepository,
         @Autowired
         open var messageService: MessageService,
         @Autowired
@@ -78,8 +85,8 @@ open class CallbackService(
 
         val answerText: String? = when (Callback.valueOf(callbackParts[0])) {
             Callback.NEW_TEAM -> {
-                val team = newTeam(user)
-                sendJoinLink(chatId, team)
+                val group = newTeam(user)
+                sendJoinLink(chatId, group)
                 null
             }
             Callback.ADD_TO_TEAM -> "ask your peers for a link"
@@ -136,23 +143,23 @@ open class CallbackService(
     private fun updateInvite(event: Event) {
         messageService.updateToAll(
                 event,
-                messageService::pairDescriptionText,
+                messageService::eventDescriptionText,
                 keyboardService::acceptedInviteKeyboard)
     }
 
     open fun newTeam(creator: UserInfo): Group {
-        val team = Group(
+        val group = Group(
                 UUID.randomUUID(),
                 creator
         )
-        team.addMember(creator)
+        group.addMember(creator)
 //        group.addMember(newDummyUser())
 
         //todo: change to one save with cascade = merge and optional save if new UserInfo ?
-        teamRepository.save(team)
+        groupRepository.save(group)
         userRepository.save(creator)
 
-        return team
+        return group
     }
 
     /**

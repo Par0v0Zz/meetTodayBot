@@ -3,7 +3,6 @@ package org.eventbot.service
 import org.eventbot.constant.BotCommand
 import org.eventbot.event.EventOrganizer
 import org.eventbot.model.UserInfo
-import org.eventbot.repository.TeamRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -11,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.EntityType
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.MessageEntity
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
+import org.eventbot.repository.GroupRepository
 import java.util.Optional
 import java.util.UUID
 
@@ -22,7 +22,7 @@ open class CommandService(
         open var messageService: MessageService,
         open var keyboardService: KeyboardService,
         open var chatService: ChatService,
-        open var teamRepository: TeamRepository,
+        open var groupRepository: GroupRepository,
         open var eventOrganizer: EventOrganizer
 ) {
     private val LOG = LoggerFactory.getLogger(CommandService::class.java)
@@ -41,10 +41,10 @@ open class CommandService(
                 BotCommand.START -> {
                     val messageText = message.text
                     if (commandText.length < messageText.length - 1) {
-                        val teamToken = messageText.substring(commandText.length + 1).trim()
-                        joinTeamByToken(teamToken, user)
+                        val groupToken = messageText.substring(commandText.length + 1).trim()
+                        joinTeamByToken(groupToken, user)
 
-                        messageService.sendMessage(chatId, messageService.teamInfo(user))
+                        messageService.sendMessage(chatId, messageService.groupInfo(user))
 
                     } else {
                         val sendMessage = messageService.getMessageWithKeyboard(
@@ -75,11 +75,11 @@ open class CommandService(
     }
 
     private fun joinTeamByToken(token: String, user: UserInfo) {
-        val teamOpt = teamRepository.findByToken(UUID.fromString(token))
+        val groupOpt = groupRepository.findByToken(UUID.fromString(token))
 
-        teamOpt.ifPresent { team ->
-            team.addMember(user)
-            teamRepository.save(team)
+        groupOpt.ifPresent { group ->
+            group.addMember(user)
+            groupRepository.save(group)
         }
     }
 

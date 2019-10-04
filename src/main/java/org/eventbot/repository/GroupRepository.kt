@@ -9,7 +9,7 @@ import java.util.UUID
 
 
 @Repository
-interface TeamRepository : JpaRepository<Group, Long> {
+interface GroupRepository : JpaRepository<Group, Long> {
 
     fun findByToken(token: UUID): Optional<Group>
 

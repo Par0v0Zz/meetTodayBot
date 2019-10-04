@@ -32,7 +32,7 @@ class EventRepositoryTest {
         user = UserInfo(0, "Vasya")
         val partner = UserInfo(0, "Petya")
 
-        event = Event(user!!, partner, true, Date())
+        event = Event(user!!, Date(), true)
         event!!.addParticipant(user!!)
     }
 

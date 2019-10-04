@@ -51,9 +51,8 @@ class PairGenerator(
 
         val event = Event(
                 first,
-                second,
-                ThreadLocalRandom.current().nextBoolean(),
-                sessionDate
+                sessionDate,
+                false
         )
 
         event.addParticipant(first)

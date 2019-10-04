@@ -11,7 +11,7 @@ import java.util.Locale
 
 @Configuration
 @EnableScheduling
-open class PairbotConfig {
+open class Config {
     @Bean(name = ["freemarkerConfig"])
     open fun freemarkerConfig(): freemarker.template.Configuration {
         val cfg = freemarker.template.Configuration(Version(2, 3, 23))

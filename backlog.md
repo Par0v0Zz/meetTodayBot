@@ -1,7 +1,7 @@
 # backlog
-* pair -> lunch - wip Sergey
+* pair -> lunch - ip Sergey
 * team -> group
-* user *-* team many-to-many
+* [in_progress][@Par0v0Zz]user *-* team many-to-many
 * group: public/private
 * group: size
 * initial data for local env

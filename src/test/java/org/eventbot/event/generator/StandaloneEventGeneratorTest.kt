@@ -1,17 +1,16 @@
 package org.eventbot.event.generator
 
 import org.apache.commons.lang3.tuple.Pair
+import org.eventbot.event.generator.standalone.StandalonePairGenerator
+import org.eventbot.model.Person
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.eventbot.event.generator.standalone.StandalonePairGenerator
-import org.eventbot.model.Person
+import java.util.ArrayList
+import java.util.HashSet
 
-import java.util.*
-
-class StandalonePairGeneratorTest {
+class StandaloneEventGeneratorTest {
     private val LOG = LoggerFactory.getLogger(javaClass)
 
     private val systemUnderTest = StandalonePairGenerator()

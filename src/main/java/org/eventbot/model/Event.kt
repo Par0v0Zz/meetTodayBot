@@ -9,11 +9,8 @@ import java.util.HashSet
 class Event(
         @ManyToOne @JoinColumn(name = "creator_pk", referencedColumnName = "pk")
         var creator: UserInfo,
-
-        @ManyToOne @JoinColumn(name = "partner_pk", referencedColumnName = "pk")
-        var partner: UserInfo,
-        var creatorHost: Boolean,
         var date: Date,
+        var private: Boolean,
         var accepted: EventStatus = EventStatus.NO_RESPONSE,
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         var pk: Long = 0,

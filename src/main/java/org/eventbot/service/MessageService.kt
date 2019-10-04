@@ -48,7 +48,7 @@ class MessageService(
 ) {
     companion object {
         const val MAX_TEXT_MESSAGE_LENGTH = 4095
-        const val PAIR_DESCRIPTION_TEMPLATE = "pair_description.ftl"
+        const val EVENT_DESCRIPTION_TEMPLATE = "event_description.ftl"
     }
 
     private val LOG = LoggerFactory.getLogger(javaClass)
@@ -120,38 +120,31 @@ class MessageService(
     }
 
     fun inviteText(user: UserInfo, pair: Event): String {
-        val pairDescription = pairDescriptionText(user, pair)
+        val eventDescription = eventDescriptionText(user, pair)
 
-        return String.format("How about this session?\n\n%s", pairDescription)
+        return String.format("How about this session?\n\n%s", eventDescription)
     }
 
-    fun pairDescriptionText(user: UserInfo, event: Event): String {
+    fun eventDescriptionText(user: UserInfo, event: Event): String {
         val ctx = HashMap<String, Any>()
 
         val creator = event.creator
-        val partner = event.partner
         val creatorOk = isAccepted(event, creator)
-        val partnerOk = isAccepted(event, partner)
-
-        val pendingOther = user == partner && java.lang.Boolean.TRUE == partnerOk && creatorOk == null || user == creator && java.lang.Boolean.TRUE == creatorOk && partnerOk == null
 
         val instant = event.date.toInstant()
-        val zone = chooseTimezone(creator, partner)
+        val zone = chooseTimezone(creator)
 
         ctx["date"] = instant.atZone(zone)
         ctx["zone"] = zone.toString()
         ctx["accepted"] = event.accepted
-        ctx["pendingOther"] = pendingOther
         ctx["creatorLink"] = userLink(creator)
-        ctx["partnerLink"] = userLink(partner)
 
-        creatorOk?.let { ctx["creatorOk"] = it }
-        partnerOk?.let { ctx["partnerOk"] = it }
-        ctx["creatorHost"] = event.creatorHost
+        creatorOk.let { ctx["creatorOk"] = it }
+        ctx["pendingOther"] = false
 
         try {
             val stringWriter = StringWriter()
-            freemarkerConfig.getTemplate(PAIR_DESCRIPTION_TEMPLATE).process(ctx, stringWriter)
+            freemarkerConfig.getTemplate(EVENT_DESCRIPTION_TEMPLATE).process(ctx, stringWriter)
 
             return stringWriter.toString()
         } catch (e: IOException) {
@@ -164,16 +157,12 @@ class MessageService(
 
     }
 
-    private fun chooseTimezone(creator: UserInfo, partner: UserInfo): ZoneId {
-        val zone: ZoneId
-        if (creator.timezone == null && partner.timezone == null) {
-            zone = ZoneId.of("UTC")
-        } else if (creator.timezone == null) {
-            zone = partner.timezone!!
+    private fun chooseTimezone(creator: UserInfo): ZoneId {
+        return if (creator.timezone == null) {
+            ZoneId.of("UTC")
         } else {
-            zone = creator.timezone!!
+            creator.timezone!!
         }
-        return zone
     }
 
     fun getUpcomingNotificationMessage(participant: Participant): SendMessage {
@@ -186,7 +175,7 @@ class MessageService(
     private fun getUpcomingNotificationText(participant: Participant): String {
         val user = participant.user
         val event = participant.event
-        return "Upcoming session in " + prettyTime.format(event.date) + ":\n\n" + pairDescriptionText(user, event)
+        return "Upcoming session in " + prettyTime.format(event.date) + ":\n\n" + eventDescriptionText(user, event)
     }
 
     @Throws(TelegramApiException::class)
@@ -261,16 +250,16 @@ class MessageService(
         }
     }
 
-    fun teamInfo(user: UserInfo): String {
-        val team = user.group
-        if (team != null) {
-            val teamList = team.members
+    fun groupInfo(user: UserInfo): String {
+        val group = user.group
+        if (group != null) {
+            val memberList = group.members
                     .sortedWith(nullsFirst(compareBy(UserInfo::firstName)))
                     .joinToString(separator = "\n") { this.userLine(it) }
 
-            val teamPart = inlineLink("group", teamLink(team))
+            val groupInlineLink = inlineLink("group", groupLink(group))
 
-            return "Your $teamPart:\n$teamList"
+            return "Your $groupInlineLink:\n$memberList"
         } else {
             return "You have no group"
         }
@@ -282,10 +271,10 @@ class MessageService(
 
     fun getJoinTeamText(group: Group): String {
         return ("Your group created!\n"
-                + inlineLink("Right-click to copy link", teamLink(group)) + "\n\nAfter someone joins, use /pair command")
+                + inlineLink("Right-click to copy link", groupLink(group)) + "\n\nAfter someone joins, use /pair command")
     }
 
-    fun teamLink(group: Group): String {
+    fun groupLink(group: Group): String {
         return botUrl + "?start=" + group.token
     }
 

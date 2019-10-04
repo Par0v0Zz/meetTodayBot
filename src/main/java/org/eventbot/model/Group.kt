@@ -5,7 +5,7 @@ import java.util.HashSet
 import java.util.UUID
 
 @Entity
-@Table(name = "teams")
+@Table(name = "groups")
 class Group (
         @Column(name = "token", columnDefinition = "BINARY(16)")
         var token: UUID,

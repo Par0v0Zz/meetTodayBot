@@ -20,7 +20,7 @@ class UserInfo(
         var lastDeclineDate: Date? = null,
         var lastMessageId: Int? = null,
         var timezone: ZoneId? = null,
-        @ManyToOne @JoinColumn(name = "team_pk", referencedColumnName = "pk")
+        @ManyToOne @JoinColumn(name = "group_pk", referencedColumnName = "pk")
         var group: Group? = null,
 
         @Temporal(TemporalType.TIMESTAMP) @CreatedDate

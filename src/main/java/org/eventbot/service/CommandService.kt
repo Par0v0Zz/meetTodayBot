@@ -69,7 +69,7 @@ open class CommandService(
                 BotCommand.MY_GROUPS -> {
 
                 }
-                BotCommand.GROUPS -> messageService.sendMessage(chatId, messageService.teamInfo(user))
+                BotCommand.GROUPS -> messageService.sendMessage(chatId, messageService.groupInfo(user))
             }
         }
     }

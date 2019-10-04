@@ -16,7 +16,7 @@ import org.eventbot.model.ParticipantId
 import org.eventbot.model.UserInfo
 import org.eventbot.repository.EventRepository
 import org.eventbot.repository.ParticipantRepository
-import org.eventbot.repository.TeamRepository
+import org.eventbot.repository.GroupRepository
 import org.eventbot.repository.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -30,12 +30,6 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import org.eventbot.constant.Callback
-import org.eventbot.model.*
-import org.eventbot.repository.EventRepository
-import org.eventbot.repository.ParticipantRepository
-import org.eventbot.repository.GroupRepository
-import org.eventbot.repository.UserRepository
 
 import java.util.Date
 import java.util.UUID

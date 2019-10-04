@@ -11,7 +11,8 @@ import org.vors.pairbot.constant.BotCommand
 import org.vors.pairbot.event.EventOrganizer
 import org.vors.pairbot.model.UserInfo
 import org.vors.pairbot.repository.TeamRepository
-import java.util.*
+import java.util.Optional
+import java.util.UUID
 
 
 @Transactional
@@ -40,7 +41,7 @@ open class CommandService(
                 BotCommand.START -> {
                     val messageText = message.text
                     if (commandText.length < messageText.length - 1) {
-                        val teamToken = messageText.substring(commandText.length + 1)
+                        val teamToken = messageText.substring(commandText.length + 1).trim()
                         joinTeamByToken(teamToken, user)
 
                         messageService.sendMessage(chatId, messageService.teamInfo(user))

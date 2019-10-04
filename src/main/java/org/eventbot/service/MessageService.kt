@@ -270,8 +270,13 @@ class MessageService(
     }
 
     fun getJoinTeamText(group: Group): String {
-        return ("Your group created!\n"
-                + inlineLink("Right-click to copy link", groupLink(group)) + "\n\nAfter someone joins, use /pair command")
+        val groupInlineLink = inlineLink("Right-click to copy link", groupLink(group))
+        return ("""
+            Your group created!
+            $groupInlineLink
+            
+            After someone joins, use /lunch command
+            """.trimIndent())
     }
 
     fun groupLink(group: Group): String {

@@ -7,5 +7,5 @@
 * initial data for local env
 * create group
 * get public group list
-* get groups created by me and where I'm invited
+* [in_progress][@snavrotskii] get groups created by me and where I'm invited
 *

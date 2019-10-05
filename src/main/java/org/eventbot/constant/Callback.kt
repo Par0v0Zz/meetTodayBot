@@ -6,5 +6,6 @@ enum class Callback {
     ACCEPT_DECLINE,
     VOID,
     ALL_GROUPS,
-    MY_GROUPS
+    MY_GROUPS,
+    GROUP_INFO
 }

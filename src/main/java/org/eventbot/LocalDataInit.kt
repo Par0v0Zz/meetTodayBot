@@ -18,8 +18,6 @@ class LocalDataInit(
     fun initData(){
 
         createDummyGroup("Dummy lunches")
-        createDummyGroup("Dummy kicker")
-        createDummyGroup("Dummy Guitar Hero")
     }
 
     private fun createDummyGroup(name: String) {

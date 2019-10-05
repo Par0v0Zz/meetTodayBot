@@ -16,6 +16,7 @@ class MyGroupsCallbackAction(
 
     override fun doAction(context: Map<CallbackParams, Any>): String? {
         val listOfGroups = GroupRepository.findByCreator(context[CallbackParams.USER_INFO] as UserInfo)
+
         if (listOfGroups.isEmpty()) {
             messageService.sendMessage(context[CallbackParams.CHAT_ID] as Long, "No groups found")
         } else {

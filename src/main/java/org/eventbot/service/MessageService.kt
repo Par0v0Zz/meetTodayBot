@@ -295,6 +295,7 @@ class MessageService(
             $groupInlineLink
             
             After someone joins, use /lunch command
+            Temporary name is ${group.token}
             """.trimIndent())
     }
 

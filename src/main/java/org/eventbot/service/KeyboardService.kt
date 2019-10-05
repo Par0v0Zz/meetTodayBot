@@ -113,4 +113,9 @@ class KeyboardService {
     fun removeCustomKeyboard(): ReplyKeyboard {
         return ReplyKeyboardRemove()
     }
+
+    fun groupActionsKeyboard(): InlineKeyboardMarkup = getOneRowKeyboard(
+            button("Rename group", Callback.RENAME_GROUP.toString())
+    )
+
 }

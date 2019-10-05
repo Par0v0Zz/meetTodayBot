@@ -269,16 +269,25 @@ class MessageService(
     fun groupInfo(user: UserInfo): String {
         val group = if (user.groups.isEmpty()) null else user.groups.random()
         if (group != null) {
-            val memberList = group.members
-                    .sortedWith(nullsFirst(compareBy(UserInfo::firstName)))
-                    .joinToString(separator = "\n") { userInfoLinkResolver.resolve(it) }
-
-            val groupInlineLink = inlineLink("${group.name?.trim()}", groupLink(group))
-
-            return "Members of $groupInlineLink:\n$memberList"
+            return printParticipantsOfGroup(group)
         } else {
             return "You have no group"
         }
+    }
+
+    private fun printParticipantsOfGroup(group: Group): String {
+        val groupIdentificator = if (group.name.isNullOrBlank()) group.token else group.name
+        val groupInlineLink = inlineLink("$groupIdentificator", groupLink(group))
+        return ("""
+                |Participants of $groupInlineLink group:
+                |${getMembers(group)}
+                """.trimMargin())
+    }
+
+    private fun getMembers(group: Group): String {
+        return group.members
+                .sortedWith(nullsFirst(compareBy(UserInfo::firstName)))
+                .joinToString(separator = "\n") { userInfoLinkResolver.resolve(it) }
     }
 
     fun publicGroupsInfo(): String {

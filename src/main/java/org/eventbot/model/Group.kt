@@ -31,4 +31,24 @@ class Group (
         members.add(user)
         user.groups.add(this)
     }
+
+    fun removeMember(user: UserInfo) {
+        members.remove(user)
+        user.groups.remove(this)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Group
+
+        if (pk != other.pk) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return pk.hashCode()
+    }
 }

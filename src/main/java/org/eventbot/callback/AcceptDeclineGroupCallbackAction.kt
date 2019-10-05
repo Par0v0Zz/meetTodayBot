@@ -4,6 +4,7 @@ import org.apache.commons.lang3.BooleanUtils
 import org.eventbot.CallbackAction
 import org.eventbot.model.Event
 import org.eventbot.model.EventStatus
+import org.eventbot.model.Participant
 import org.eventbot.model.ParticipantId
 import org.eventbot.model.UserInfo
 import org.eventbot.repository.EventRepository
@@ -13,7 +14,6 @@ import org.eventbot.service.KeyboardService
 import org.eventbot.service.MessageService
 import org.springframework.stereotype.Component
 import java.lang.Long.valueOf
-import java.util.Date
 
 
 @Component
@@ -37,37 +37,24 @@ class AcceptDeclineGroupCallbackAction(
 
         participantRepository.save(participant)
 
-        if (!accepted) {
-            user.lastDeclineDate = Date()
-            userRepository.save(user)
-        }
-
         val event = participant.event
-        updateEvent(event, participant.accepted)
+        updateEvent(event, participant)
         updateInvite(event)
-
         return "ok"
     }
 
-    private fun updateEvent(event: Event, participantAccept: EventStatus) {
-        val responses = event.participants.map { it.accepted }
-
-        if (participantAccept == EventStatus.DECLINED) {
-            event.accepted = EventStatus.DECLINED
-        } else if (responses.all { it == EventStatus.ACCEPTED }) {
-            event.accepted = EventStatus.ACCEPTED
-        }
-
-        if (event.accepted != EventStatus.NO_RESPONSE) {
-            eventRepository.save(event)
-        }
+    private fun updateEvent(event: Event, participant: Participant) {
+        if (participant.accepted == EventStatus.DECLINED) event.removeParticipant(participant)
+        eventRepository.save(event)
     }
 
+    //TODO: implement the way to inform creator about current participants status
     private fun updateInvite(event: Event) {
-        messageService.updateToAll(
-                event,
-                messageService::eventDescriptionText,
-                keyboardService::acceptedInviteKeyboard)
+
+//        messageService.updateToAll(
+//                event,
+//                messageService::eventDescriptionText,
+//                keyboardService::acceptedInviteKeyboard)
     }
 
 }

@@ -3,8 +3,8 @@ package org.eventbot.service
 import org.eventbot.constant.BotCommand
 import org.eventbot.event.EventOrganizer
 import org.eventbot.model.UserInfo
-import org.eventbot.repository.UserRepository
 import org.eventbot.repository.GroupRepository
+import org.eventbot.repository.UserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -46,7 +46,8 @@ open class CommandService(
                         val groupToken = messageText.substring(commandText.length + 1).trim()
                         joinTeamByToken(groupToken, user)
 
-                        messageService.sendMessage(chatId, messageService.groupInfo(user))
+                        val messageToSend = messageService.getMessage(chatId, messageService.groupInfo(user))
+                        messageService.sendMessage(messageToSend)
 
                     } else {
                         val sendMessage = messageService.getMessageWithKeyboard(
@@ -55,9 +56,6 @@ open class CommandService(
                                 keyboardService.startKeyboard)
                         messageService.sendMessage(sendMessage)
                     }
-                }
-                BotCommand.LUNCH -> {
-                    eventOrganizer.tryOrganizeEvent(user)
                 }
                 BotCommand.SET_LOCATION -> messageService.requestLocation(chatId)
                 BotCommand.VOID -> TODO()

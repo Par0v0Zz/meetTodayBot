@@ -4,13 +4,15 @@ import java.io.Serializable
 import java.util.Objects
 
 class ParticipantId : Serializable {
-    val user: Long
-    val event: Long
+    var user: Long? = null
+    var event: Long? = null
 
-    constructor(user: Long, event: Long) {
+    constructor(user: Long?, event: Long?) {
         this.user = user
         this.event = event
     }
+
+    constructor()
 
     override fun hashCode(): Int {
         return Objects.hash(this.user, this.event)

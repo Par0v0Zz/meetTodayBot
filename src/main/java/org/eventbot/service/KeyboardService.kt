@@ -30,7 +30,7 @@ class KeyboardService {
                         Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.NEW_GROUP.toString(), java.lang.Boolean.TRUE)
                 ))
 
-    fun groupsAdminKeyboard(groups: Collection<Group>): InlineKeyboardMarkup{
+    fun groupsAdminKeyboard(groups: Collection<Group>): InlineKeyboardMarkup {
         return getMultiRowKeyboard(groupAdminRows(groups))
     }
 
@@ -40,7 +40,7 @@ class KeyboardService {
 
     private fun groupAdminRow(group: Group): List<InlineKeyboardButton> {
         return listOf(button(
-                "group " + (group.name?: "noname") + " show participants",
+                "group " + (group.name ?: "noname") + " show participants",
                 Callback.GROUP_INFO.toString()
         ))
     }
@@ -52,6 +52,15 @@ class KeyboardService {
         return getOneRowKeyboard(
                 button("All groups", Callback.ALL_GROUPS.toString()),
                 button("My groups", Callback.MY_GROUPS.toString())
+        )
+    }
+
+    fun groupActionsKeyboard(group: Group): InlineKeyboardMarkup {
+        return getOneRowKeyboard(
+                button("Invite for lunch!",
+                        Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.LUNCH.toString(), group.pk)),
+                button("Leave group",
+                        Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.LEAVE_GROUP.toString(), group.pk))
         )
     }
 

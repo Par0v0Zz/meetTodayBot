@@ -4,6 +4,8 @@ import com.google.common.base.Splitter
 import org.eventbot.callback.AcceptDeclineGroupCallbackAction
 import org.eventbot.callback.AllGroupsCallbackAction
 import org.eventbot.callback.CallbackParams
+import org.eventbot.callback.CreateEventCallbackAction
+import org.eventbot.callback.LeaveGroupCallbackAction
 import org.eventbot.callback.MyGroupsCallbackAction
 import org.eventbot.callback.NewGroupCallbackAction
 import org.eventbot.callback.RenameGroupCallbackAction
@@ -12,6 +14,8 @@ import org.eventbot.constant.Callback
 import org.eventbot.constant.Callback.ACCEPT_DECLINE
 import org.eventbot.constant.Callback.ADD_TO_GROUP
 import org.eventbot.constant.Callback.ALL_GROUPS
+import org.eventbot.constant.Callback.LEAVE_GROUP
+import org.eventbot.constant.Callback.LUNCH
 import org.eventbot.constant.Callback.MY_GROUPS
 import org.eventbot.constant.Callback.NEW_GROUP
 import org.eventbot.constant.Callback.RENAME_GROUP
@@ -82,11 +86,11 @@ open class CallbackService(
                 CallbackParams.MESSAGE_FROM to callbackquery.message.from.id
         )
 
-        if (callbackParts.size > 2) {
+        if (callbackParts.size > 1) {
             params[CallbackParams.ARG] = callbackParts[1]
         }
 
-        if (callbackParts.size > 3) {
+        if (callbackParts.size > 2) {
             params[CallbackParams.ARG2] = callbackParts[2]
         }
 
@@ -98,6 +102,8 @@ open class CallbackService(
             ALL_GROUPS -> applicationContext.getBean(AllGroupsCallbackAction::class.java).doAction(params)
             MY_GROUPS -> applicationContext.getBean(MyGroupsCallbackAction::class.java).doAction(params)
             RENAME_GROUP -> applicationContext.getBean(RenameGroupCallbackAction::class.java).doAction(params)
+            LEAVE_GROUP -> applicationContext.getBean(LeaveGroupCallbackAction::class.java).doAction(params)
+            LUNCH -> applicationContext.getBean(CreateEventCallbackAction::class.java).doAction(params)
             Callback.GROUP_INFO -> {
                 messageService.sendMessage(callbackquery.message.chatId, messageService.groupInfo(user))
 

@@ -8,5 +8,7 @@ enum class Callback {
     ALL_GROUPS,
     MY_GROUPS,
     RENAME_GROUP,
-    GROUP_INFO
+    GROUP_INFO,
+    LEAVE_GROUP,
+    LUNCH
 }

@@ -1,55 +1,41 @@
 package org.eventbot.event.generator
 
 
-
-import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 import org.eventbot.model.Event
 import org.eventbot.model.Group
+import org.eventbot.model.Participant
 import org.eventbot.model.UserInfo
+import org.eventbot.repository.EventRepository
+import org.eventbot.repository.ParticipantRepository
 import org.eventbot.repository.UserRepository
 import org.eventbot.service.TimeService
-import java.util.*
-import java.util.concurrent.ThreadLocalRandom
+import org.springframework.stereotype.Component
+import java.util.Date
+
 @Component
 class EventGenerator(
         private val timeService: TimeService,
-        private val userRepository: UserRepository
+        private val userRepository: UserRepository,
+        private val participantRepository: ParticipantRepository,
+        private val eventRepository: EventRepository
 ) {
 
-    private val LOG = LoggerFactory.getLogger(javaClass)
-
-    fun organizeLunch(user: UserInfo, group: Group, eventDate: Date): Event? {
-        val others = findAvailablePeers(group)
-
-        if (others.isEmpty()) {
-            LOG.debug("Event not found, no available peers")
-            return null
-        }
-        val event = lunch(user, others, eventDate)
-
-        return null
+    fun organizeLunch(user: UserInfo, group: Group, eventDate: Date): Event {
+        val others = group.members.filter { it == user }.toSet()
+        return lunch(user, others, eventDate)
     }
 
-    private fun findAvailablePeers(group: Group): List<UserInfo> {
-        return userRepository.findByGroup(group)
-    }
-
-    private fun lunch(first: UserInfo, others: List<UserInfo>, sessionDate: Date): Event {
-
-        val random = ThreadLocalRandom.current()
-        val pairIndex = random.nextInt(others.size)
-        val second = others[pairIndex]
-
+    private fun lunch(first: UserInfo, others: Set<UserInfo>, sessionDate: Date): Event {
         val event = Event(
                 first,
                 sessionDate,
                 false
         )
-
-        event.addParticipant(first)
-        event.addParticipant(second)
-
+        others.forEach {
+            val participant = Participant(it, event)
+            participantRepository.save(participant)
+            event.addParticipant(participant)
+        }
         return event
     }
 

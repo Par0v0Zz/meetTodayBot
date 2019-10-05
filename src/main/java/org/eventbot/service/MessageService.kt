@@ -129,11 +129,12 @@ class MessageService(
     }
 
     fun inviteText(user: UserInfo, pair: Event): String {
-        val eventDescription = eventDescriptionText(user, pair)
+//        val eventDescription = eventDescriptionText(user, pair)
 
-        return String.format("How about this session?\n\n%s", eventDescription)
+        return String.format("How about lunch today?")
     }
 
+    //TODO: write correct description handling
     fun eventDescriptionText(user: UserInfo, event: Event): String {
         val ctx = HashMap<String, Any>()
 

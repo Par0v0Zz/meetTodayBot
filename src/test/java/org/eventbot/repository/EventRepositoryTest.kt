@@ -1,19 +1,18 @@
 package org.eventbot.repository
 
+import org.eventbot.Application
+import org.eventbot.model.Event
+import org.eventbot.model.UserInfo
+import org.eventbot.service.TimeService
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
-import org.eventbot.Application
-import org.eventbot.model.Event
-import org.eventbot.model.UserInfo
-import org.eventbot.service.TimeService
-
 import java.util.Date
-
-import org.junit.Assert.*
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = [Application::class])
@@ -33,7 +32,7 @@ class EventRepositoryTest {
         val partner = UserInfo(0, "Petya")
 
         event = Event(user!!, Date(), true)
-        event!!.addParticipant(user!!)
+//        event!!.addParticipant(user!!)
     }
 
     @Test

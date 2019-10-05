@@ -3,6 +3,7 @@ package org.eventbot.service
 import com.google.common.base.Splitter
 import org.eventbot.callback.AcceptDeclineGroupCallbackAction
 import org.eventbot.callback.AcceptedEventsCallbackAction
+import org.eventbot.callback.AddDescriptionCallbackAction
 import org.eventbot.callback.AllEventsCallbackAction
 import org.eventbot.callback.AllGroupsCallbackAction
 import org.eventbot.callback.CallbackParams
@@ -15,10 +16,10 @@ import org.eventbot.constant.BotConstants.CALLBACK_DATA_SEPARATOR
 import org.eventbot.constant.Callback
 import org.eventbot.constant.Callback.ACCEPTED_EVENTS
 import org.eventbot.constant.Callback.ACCEPT_DECLINE
+import org.eventbot.constant.Callback.ADD_DESCRIPTION
 import org.eventbot.constant.Callback.ADD_TO_GROUP
 import org.eventbot.constant.Callback.ALL_EVENTS
 import org.eventbot.constant.Callback.ALL_GROUPS
-import org.eventbot.constant.Callback.GROUP_INFO
 import org.eventbot.constant.Callback.LEAVE_GROUP
 import org.eventbot.constant.Callback.LUNCH
 import org.eventbot.constant.Callback.MY_GROUPS
@@ -109,7 +110,8 @@ open class CallbackService(
             RENAME_GROUP -> applicationContext.getBean(RenameGroupCallbackAction::class.java).doAction(params)
             LEAVE_GROUP -> applicationContext.getBean(LeaveGroupCallbackAction::class.java).doAction(params)
             LUNCH -> applicationContext.getBean(CreateEventCallbackAction::class.java).doAction(params)
-            GROUP_INFO -> {
+            ADD_DESCRIPTION -> applicationContext.getBean(AddDescriptionCallbackAction::class.java).doAction(params)
+            Callback.GROUP_INFO -> {
                 messageService.sendMessage(callbackquery.message.chatId, messageService.groupInfo(user))
 
                 ""

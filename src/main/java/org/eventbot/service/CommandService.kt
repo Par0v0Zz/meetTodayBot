@@ -1,11 +1,9 @@
 package org.eventbot.service
 
 import org.eventbot.constant.BotCommand
-import org.eventbot.event.EventOrganizer
 import org.eventbot.model.UserInfo
 import org.eventbot.repository.GroupRepository
 import org.eventbot.repository.UserRepository
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import org.telegram.telegrambots.meta.api.objects.EntityType
@@ -16,22 +14,29 @@ import java.util.Optional
 import java.util.UUID
 
 
-@Transactional
 @Component
 open class CommandService(
         open var userService: UserService,
         open var messageService: MessageService,
         open var keyboardService: KeyboardService,
-        open var chatService: ChatService,
         open var groupRepository: GroupRepository,
-        open var eventOrganizer: EventOrganizer,
-        open var userRepository: UserRepository
-) {
-    private val LOG = LoggerFactory.getLogger(CommandService::class.java)
+        open var userRepository: UserRepository,
+        var text: String = """Hi! 
+I'm very young bot, but I already know some tricks!
+What you can do with me:
+- You can list all available public groups using /publicgroups command 
+and join them with just one tap on their names
 
+- You can ask your mates for invitation link to join their public or private group
+
+- Or, you even can create your own group! Just don't forget to name it properly 
+and give good description to attract more people to join.
+    """.trimIndent()
+) {
 
     @Throws(TelegramApiException::class)
-    fun processCommand(message: Message) {
+    @Transactional
+    open fun processCommand(message: Message) {
         val commandTextOpt = extractCommandText(message)
 
         if (commandTextOpt.isPresent) {
@@ -52,7 +57,7 @@ open class CommandService(
                     } else {
                         val sendMessage = messageService.getMessageWithKeyboard(
                                 chatId,
-                                "Hi! Let's make a group. \nOr ask your peers for a link to join",
+                                text,
                                 keyboardService.startKeyboard)
                         messageService.sendMessage(sendMessage)
                     }
@@ -64,7 +69,7 @@ open class CommandService(
                             keyboardService.infoGroupOptionsKeyboard())
                     messageService.sendMessage(sendMessage)
                 }
-                BotCommand.PUBLIC_GROUPS -> messageService.sendMessage(chatId, messageService.publicGroupsInfo())
+                BotCommand.PUBLICGROUPS -> messageService.sendMessage(chatId, messageService.publicGroupsInfo())
                 BotCommand.EVENTS -> {
                     val sendMessage = messageService.getMessageWithKeyboard(chatId, "Select event type",
                             keyboardService.infoEventOptionsKeyboard())

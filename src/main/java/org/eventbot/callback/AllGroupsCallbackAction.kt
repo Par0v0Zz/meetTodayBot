@@ -20,10 +20,12 @@ class AllGroupsCallbackAction(
         if (listOfGroups.isEmpty()) {
             messageService.sendMessage(context[CallbackParams.CHAT_ID] as Long, "No groups found")
         } else {
-            messageService.sendMessage(
-                    context[CallbackParams.CHAT_ID] as Long,
-                    "Your groups:",
-                    keyboardService.groupsAdminKeyboard(listOfGroups))
+            listOfGroups.stream().forEach {
+                messageService.sendMessage(
+                        context[CallbackParams.CHAT_ID] as Long,
+                        "Your groups:",
+                        keyboardService.groupsAdminKeyboard(it))
+            }
         }
 
         return ""

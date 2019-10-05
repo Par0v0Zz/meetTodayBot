@@ -23,8 +23,9 @@ class MyGroupsCallbackAction(
         } else {
             listOfGroups.stream().forEach {
                 messageService.sendMessage(
-                        context[CallbackParams.CHAT_ID] as Long, (it.name
-                        ?: "" + it.token) + "\n" + it.description + "\n\n",
+                        context[CallbackParams.CHAT_ID] as Long, messageService.inlineLink(
+                        it.name ?: it.token.toString(), messageService.groupLink(it)) +
+                        "\n" + it.description + "\n\n",
                         keyboardService.groupActionsKeyboard(it, userInfo))
             }
         }

@@ -13,7 +13,6 @@ import org.eventbot.repository.UserRepository
 import org.eventbot.service.KeyboardService
 import org.eventbot.service.MessageService
 import org.springframework.stereotype.Component
-import java.lang.Long.valueOf
 
 
 @Component
@@ -31,7 +30,7 @@ class AcceptDeclineGroupCallbackAction(
         val user = context[CallbackParams.USER_INFO] as UserInfo
         val participant = participantRepository.getOne(ParticipantId(user.pk, eventPk))
 
-        val accepted = BooleanUtils.toBoolean(CallbackParams.ARG2 as String)
+        val accepted = BooleanUtils.toBoolean(context[CallbackParams.ARG2] as String)
 
         participant.accepted = if (accepted) EventStatus.ACCEPTED else EventStatus.DECLINED
 

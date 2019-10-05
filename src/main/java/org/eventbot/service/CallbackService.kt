@@ -38,7 +38,6 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 
-@Transactional
 @Component
 open class CallbackService(
         @Autowired
@@ -64,7 +63,8 @@ open class CallbackService(
     val LOG: Logger = LoggerFactory.getLogger(CommandService::class.java)
 
     @Throws(TelegramApiException::class)
-    fun processKeyboardCallback(callbackquery: CallbackQuery) {
+    @Transactional
+    open fun processKeyboardCallback(callbackquery: CallbackQuery) {
         val callbackParts = extractCallbackParts(callbackquery)
         if (CollectionUtils.isEmpty(callbackParts)) {
             return

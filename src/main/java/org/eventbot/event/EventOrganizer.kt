@@ -10,15 +10,16 @@ import org.springframework.stereotype.Component
 import java.util.Date
 import javax.transaction.Transactional
 
-@Transactional
+
 @Component
 open class EventOrganizer(
         private val eventGenerator: EventGenerator,
         private val eventRepository: EventRepository,
-        val messageService: MessageService,
-        val keyboardService: KeyboardService
+        private val messageService: MessageService,
+        private val keyboardService: KeyboardService
 ) {
-    fun organizeEvent(user: UserInfo, group: Group) {
+    @Transactional
+    open fun organizeEvent(user: UserInfo, group: Group) {
         val event = eventGenerator.organizeLunch(user, group, Date())
         eventRepository.save(event)
         messageService.sendToAll(event, messageService::inviteText, keyboardService::getInviteKeyboard)

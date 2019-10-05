@@ -13,6 +13,7 @@ import org.eventbot.repository.ParticipantRepository
 import org.eventbot.repository.UserRepository
 import org.eventbot.service.KeyboardService
 import org.eventbot.service.MessageService
+import org.eventbot.service.UserInfoLinkResolver
 import org.springframework.stereotype.Component
 
 
@@ -22,7 +23,8 @@ class AcceptDeclineGroupCallbackAction(
         val userRepository: UserRepository,
         val eventRepository: EventRepository,
         val messageService: MessageService,
-        val keyboardService: KeyboardService
+        val keyboardService: KeyboardService,
+        val userInfoLinkResolver: UserInfoLinkResolver
 ) : CallbackAction {
 
     override fun doAction(context: Map<CallbackParams, Any>): String? {
@@ -60,7 +62,7 @@ class AcceptDeclineGroupCallbackAction(
 
     private fun sendListOfMembers(event: Event, chatId: Long) {
         val messageText = event.participants
-                .map { "${it.user.firstName} ${it.user.lastName}" }
+                .map { userInfoLinkResolver.resolve(it.user) }
                 .joinToString("\n")
 
         if (isNotEmpty(messageText)) {

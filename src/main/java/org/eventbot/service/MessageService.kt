@@ -53,7 +53,8 @@ class MessageService(
         var userRepository: UserRepository,
         var participantRepository: ParticipantRepository,
         var groupRepository: GroupRepository,
-        var gameService: GameService
+        var gameService: GameService,
+        var userInfoLinkResolver: LinkResolver<UserInfo>
 ) {
     companion object {
         const val MAX_TEXT_MESSAGE_LENGTH = 4095
@@ -161,7 +162,7 @@ class MessageService(
         ctx["date"] = instant.atZone(zone)
         ctx["zone"] = zone.toString()
         ctx["accepted"] = event.accepted
-        ctx["creatorLink"] = userLink(creator)
+        ctx["creatorLink"] = userInfoLinkResolver.resolve(creator)
 
         creatorOk.let { ctx["creatorOk"] = it }
         ctx["pendingOther"] = false
@@ -224,18 +225,6 @@ class MessageService(
                 .single().accepted == EventStatus.ACCEPTED
     }
 
-    fun userLink(user: UserInfo): String {
-        return userMentionText(user)
-    }
-
-    fun userMentionText(user: UserInfo): String {
-        var label = user.firstName.trim()
-        if (user.lastName != null) {
-            label += " " + user.lastName!!.trim()
-        }
-        return String.format("[%s](tg://user?id=%s)", label, user.userId)
-    }
-
     fun sendToAll(event: Event, textProvider: KFunction2<@ParameterName(name = "user") UserInfo, @ParameterName(name = "pair") Event, String>, keyboardProvider: KFunction1<@ParameterName(name = "event") Event, InlineKeyboardMarkup>) {
         val keyboard = keyboardProvider.invoke(event)
 
@@ -282,7 +271,7 @@ class MessageService(
         if (group != null) {
             val memberList = group.members
                     .sortedWith(nullsFirst(compareBy(UserInfo::firstName)))
-                    .joinToString(separator = "\n") { this.userLine(it) }
+                    .joinToString(separator = "\n") { userInfoLinkResolver.resolve(it) }
 
             val groupInlineLink = inlineLink("${group.name?.trim()}", groupLink(group))
 
@@ -308,10 +297,6 @@ class MessageService(
                 this.inlineLink(it.name ?: "noname group", groupLink(it)) +
                         "\n" + it.description + "\n\n"
             }
-
-    private fun userLine(user: UserInfo): String {
-        return userLink(user)
-    }
 
     fun getJoinTeamText(group: Group): String {
         val groupInlineLink = inlineLink("Right-click to copy link", groupLink(group))

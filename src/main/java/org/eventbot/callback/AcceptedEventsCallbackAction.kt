@@ -30,9 +30,14 @@ class AcceptedEventsCallbackAction(
         } else {
             events.forEach {
                 val participant = participantRepository.getOne(ParticipantId(userInfo.pk, it.pk))
-                messageService.sendMessage(context[CallbackParams.CHAT_ID] as Long,
-                        "${participant.accepted} at ${it.date} created by ${it.creator.firstName} ${it.creator.lastName}",
-                        keyboardService.acceptedInviteKeyboard(participant, it))
+                messageService.sendMessage(
+                        context[CallbackParams.CHAT_ID] as Long,
+                        """
+                            ${it.creator.firstName} ${it.creator.lastName}
+                            ${it.date} -- ${participant.accepted}
+                        """.trimIndent(),
+                        keyboardService.acceptedInviteKeyboard(participant, it)
+                )
             }
         }
 

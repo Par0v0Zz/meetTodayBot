@@ -8,9 +8,11 @@ import org.eventbot.service.KeyboardService
 import org.eventbot.service.MessageService
 import org.springframework.stereotype.Component
 import java.util.Date
+import javax.transaction.Transactional
 
+@Transactional
 @Component
-class EventOrganizer(
+open class EventOrganizer(
         private val eventGenerator: EventGenerator,
         private val eventRepository: EventRepository,
         val messageService: MessageService,

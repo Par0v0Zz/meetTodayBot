@@ -25,16 +25,16 @@ class EventGenerator(
         return lunch(user, others, eventDate)
     }
 
-    private fun lunch(first: UserInfo, others: Set<UserInfo>, sessionDate: Date): Event {
+    private fun lunch(first: UserInfo, users: Set<UserInfo>, sessionDate: Date): Event {
         val event = Event(
                 first,
                 sessionDate,
                 false
         )
-        others.forEach {
+        users.forEach {
             val participant = Participant(it, event)
-            participantRepository.save(participant)
             event.addParticipant(participant)
+//            participantRepository.save(participant)
         }
         return event
     }

@@ -83,7 +83,7 @@ open class CallbackService(
         val params = mutableMapOf(
                 CallbackParams.USER_INFO to user,
                 CallbackParams.CHAT_ID to callbackquery.message.chatId,
-                CallbackParams.MESSAGE_FROM to callbackquery.message.from.id
+                CallbackParams.MESSAGE_FROM to userId
         )
 
         if (callbackParts.size > 1) {

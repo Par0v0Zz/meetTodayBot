@@ -26,7 +26,7 @@ class AcceptDeclineGroupCallbackAction(
 ) : CallbackAction {
 
     override fun doAction(context: Map<CallbackParams, Any>): String? {
-        val eventPk = valueOf(context[CallbackParams.ARG] as String)
+        val eventPk = (context[CallbackParams.ARG] as String).toLong()
 
         val user = context[CallbackParams.USER_INFO] as UserInfo
         val participant = participantRepository.getOne(ParticipantId(user.pk, eventPk))

@@ -1,5 +1,6 @@
 package org.eventbot.model
 
+import org.hibernate.engine.internal.Cascade
 import java.util.Date
 import java.util.HashSet
 import javax.persistence.CascadeType
@@ -22,12 +23,13 @@ class Event(
         var accepted: EventStatus = EventStatus.NO_RESPONSE,
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         var pk: Long = 0,
-        @OneToMany(cascade = [CascadeType.MERGE], mappedBy = "event")
+        @OneToMany(cascade = [CascadeType.PERSIST], mappedBy = "event")
         var participants: MutableSet<Participant> = HashSet()
 ) {
 
     fun addParticipant(participant: Participant) {
         participants.add(participant)
+        participant.event = this
     }
 
     fun removeParticipant(participant: Participant) {

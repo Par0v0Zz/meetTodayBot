@@ -293,7 +293,11 @@ class MessageService(
         val groups = groupRepository.findByPrivateFalse()
         val groupList = groupList(groups)
 
-        return "Found public groups:\n$groupList\nFeel free to join! :)"
+        return """
+            |${groups.size} Public groups was found:
+            |$groupList
+            |Feel free to join! :)
+        """.trimMargin()
     }
 
     fun groupList(groups: Collection<Group>) = groups

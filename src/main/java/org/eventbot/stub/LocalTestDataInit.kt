@@ -17,10 +17,14 @@ class LocalTestDataInit(
     @PostConstruct
     fun initData(){
 
-        createDummyUser()
-        createDummyUser()
-        createDummyUser()
         createDummyGroup("Dummy lunches", createDummyUser())
+        createDummyGroup("Dummy Kicker", createDummyUser())
+        createDummyGroup("Dummy Guitar Hero", createDummyUser())
+        createDummyGroup("Dummy Cinema", createDummyUser())
+        createDummyGroup("Dummy Soccer", createDummyUser())
+        createDummyGroup("Dummy Evening Run", createDummyUser())
+        createDummyGroup("Dummy Boardgames", createDummyUser())
+        createDummyGroup("Dummy Spanish Speaking Club", createDummyUser())
 
     }
 

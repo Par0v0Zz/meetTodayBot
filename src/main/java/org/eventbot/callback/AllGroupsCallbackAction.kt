@@ -10,12 +10,12 @@ class AllGroupsCallbackAction(private val messageService: MessageService) : Call
 
     override fun doAction(context: Map<CallbackParams, Any>): String? {
         val userInfo = context[CallbackParams.USER_INFO] as UserInfo
-        val listOfGroups = userInfo.groups.map { it.token }.joinToString("\n")
+        val listOfGroups = userInfo.groups
 
         if (listOfGroups.isEmpty()) {
             messageService.sendMessage(context[CallbackParams.CHAT_ID] as Long, "No groups found")
         } else {
-            messageService.sendMessage(context[CallbackParams.CHAT_ID] as Long, listOfGroups)
+            messageService.sendMessage(context[CallbackParams.CHAT_ID] as Long, messageService.groupList(listOfGroups))
         }
 
         return ""

@@ -16,10 +16,14 @@ class LocalDataInit(
         open var userRepository: UserRepository) {
     @PostConstruct
     fun initData(){
-
-        createDummyGroup("Dummy lunches")
-        createDummyGroup("Dummy kicker")
+        createDummyGroup("Dummy Lunches")
+        createDummyGroup("Dummy Kicker")
         createDummyGroup("Dummy Guitar Hero")
+        createDummyGroup("Dummy Cinema")
+        createDummyGroup("Dummy Soccer")
+        createDummyGroup("Dummy Evening Run")
+        createDummyGroup("Dummy Boardgames")
+        createDummyGroup("Dummy Spanish Speaking Club")
     }
 
     private fun createDummyGroup(name: String) {

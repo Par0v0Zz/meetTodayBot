@@ -279,8 +279,11 @@ class MessageService(
         val groupList = groupList(groups)
 
 //        val groupInlineLink = inlineLink("group", groupLink(group))
-
-        return "Found public groups:\n$groupList\nFeel free to join! :)"
+        return """
+            |${groups.size} Public groups was found:
+            |$groupList
+            |Feel free to join! :)
+        """.trimMargin()
     }
 
     open fun groupList(groups: Set<Group>) = groups

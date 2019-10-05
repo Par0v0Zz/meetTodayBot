@@ -125,7 +125,19 @@ class MessageService(
 
 
     fun truncateToMaxMessageLength(text: String): String {
-        return StringUtils.abbreviate(text, MAX_TEXT_MESSAGE_LENGTH)
+        return if (text.length >= MAX_TEXT_MESSAGE_LENGTH) {
+
+            var trimmedText = StringUtils.abbreviate(text, MAX_TEXT_MESSAGE_LENGTH)
+            val lastIndexOfNewline = text.lastIndexOf('\n')
+
+            if (lastIndexOfNewline != -1) {
+                trimmedText.substring(0, lastIndexOfNewline)
+            } else {
+                trimmedText
+            }
+        } else {
+            text
+        }
     }
 
     fun inviteText(user: UserInfo, pair: Event): String {

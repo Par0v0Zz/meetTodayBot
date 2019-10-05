@@ -30,7 +30,7 @@ class AllEventsCallbackAction(
             events.forEach {
                 val participant = participantRepository.getOne(ParticipantId(userInfo.pk, it.pk))
                 messageService.sendMessage(context[CallbackParams.CHAT_ID] as Long,
-                        "${participant.accepted} ${it.name} ${it.creator.firstName} ${it.creator.lastName}",
+                        "${it.name} with ${it.creator.firstName} ${it.creator.lastName}",
                         keyboardService.acceptedInviteKeyboard(participant, it))
             }
         }

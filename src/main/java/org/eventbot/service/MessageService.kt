@@ -144,9 +144,10 @@ class MessageService(
     }
 
     fun inviteText(user: UserInfo, pair: Event): String {
-//        val eventDescription = eventDescriptionText(user, pair)
-
-        return String.format("Hey pal, how about lunch today at 13:00? :)")
+        return """
+        ${userInfoLinkResolver.resolve(pair.creator)}
+        Hey pal, how about lunch today at 13:00? :)?
+        """.trimIndent()
     }
 
     //TODO: write correct description handling

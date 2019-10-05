@@ -144,7 +144,7 @@ class KeyboardService {
     }
 
     fun groupActionsKeyboard(): InlineKeyboardMarkup = getOneRowKeyboard(
-            button("Rename group", Callback.RENAME_GROUP.toString())
+            button("Name group", Callback.RENAME_GROUP.toString())
     )
 
 }

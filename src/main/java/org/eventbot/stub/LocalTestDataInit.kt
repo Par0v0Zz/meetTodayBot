@@ -6,7 +6,7 @@ import org.eventbot.repository.GroupRepository
 import org.eventbot.repository.UserRepository
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
-import java.util.*
+import java.util.UUID
 import javax.annotation.PostConstruct
 
 @Component
@@ -14,8 +14,15 @@ import javax.annotation.PostConstruct
 class LocalTestDataInit(
         open var groupRepository: GroupRepository,
         open var userRepository: UserRepository) {
+
+    private val firstnames = listOf("Muhammad", "Sai", "Madhavaditya", "Raahithya", "Rudra", "Advaith", "Shivansh", "Zayn",
+            "Gautam", "Agastya", "Aadesh", "Amandeep", "Bharat", "Nakul", "Mehul", "Lalit", "Karthik", "Vijay", "Vinod", "Kamal")
+
+    private val lastnames = listOf("Feliciano", "Fayre", "Chukwueneka", "Canciana", "Berengár", "Bárbara", "Arama", "Alipha",
+            "Affonso", "Flávia", "Francisca", "Nathalia", "Okorie", "Oson", "Shel", "Tequila", "Tor", "Tristao", "Zoie", "Gijima")
+
     @PostConstruct
-    fun initData(){
+    fun initData() {
 
         createDummyGroup("Dummy lunches", createDummyUser())
         createDummyGroup("Dummy Kicker", createDummyUser())
@@ -29,7 +36,11 @@ class LocalTestDataInit(
     }
 
     private fun createDummyUser(): UserInfo {
-        val user = UserInfo(0, "DummyUser" + Date())
+        val user = UserInfo(
+                userId = 0,
+                firstName = "Dummy" + firstnames.shuffled().take(1)[0],
+                lastName = lastnames.shuffled().take(1)[0]
+        )
 
         userRepository.save(user)
         return user

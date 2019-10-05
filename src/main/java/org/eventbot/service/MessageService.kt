@@ -229,7 +229,10 @@ class MessageService(
     }
 
     fun userMentionText(user: UserInfo): String {
-        val label = Optional.ofNullable(user.firstName).orElse("Noname")
+        var label = user.firstName.trim()
+        if (user.lastName != null) {
+            label += " " + user.lastName!!.trim()
+        }
         return String.format("[%s](tg://user?id=%s)", label, user.userId)
     }
 
@@ -281,9 +284,9 @@ class MessageService(
                     .sortedWith(nullsFirst(compareBy(UserInfo::firstName)))
                     .joinToString(separator = "\n") { this.userLine(it) }
 
-            val groupInlineLink = inlineLink("group", groupLink(group))
+            val groupInlineLink = inlineLink("${group.name?.trim()}", groupLink(group))
 
-            return "Your $groupInlineLink:\n$memberList"
+            return "Members of $groupInlineLink:\n$memberList"
         } else {
             return "You have no group"
         }
@@ -313,11 +316,8 @@ class MessageService(
     fun getJoinTeamText(group: Group): String {
         val groupInlineLink = inlineLink("Right-click to copy link", groupLink(group))
         return ("""
-            Your group created!
-            $groupInlineLink
-            
-            After someone joins, use /lunch command
-            Temporary name is ${group.token}
+            Your group created! $groupInlineLink
+            To open all groups use command /groups
             """.trimIndent())
     }
 

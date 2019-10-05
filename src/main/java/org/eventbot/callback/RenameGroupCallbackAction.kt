@@ -24,7 +24,10 @@ open class RenameGroupCallbackAction(private val freeTextInputService: FreeTextI
                 group.name = text
                 groupRepository.save(group)
 
-                messageService.sendMessage(chatId, "Group ${group.token} renamed to ${text}")
+                messageService.sendMessage(
+                        chatId,
+                        "Group was renamed, to view all groups type /groups"
+                )
             }
         }
 

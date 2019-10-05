@@ -43,17 +43,18 @@ and give good description to attract more people to join.
             val commandText = commandTextOpt.get()
 
             val chatId = message.chatId
-            val user = userService.findByUserId(message.from.id).get()
+            val user = userService.findByUserId(message.from.id)
             when (BotCommand.valueOf(commandText.toUpperCase())) {
                 BotCommand.START -> {
                     val messageText = message.text
                     if (commandText.length < messageText.length - 1) {
                         val groupToken = messageText.substring(commandText.length + 1).trim()
-                        var groupName = joinTeamByToken(groupToken, user)
 
-                        val messageToSend = messageService.getMessage(chatId, messageService.groupInfo(user, groupName))
-                        messageService.sendMessage(messageToSend)
-
+                        user?.let {
+                            val groupName = joinTeamByToken(groupToken, user)
+                            val messageToSend = messageService.getMessage(chatId, messageService.groupInfo(user, groupName))
+                            messageService.sendMessage(messageToSend)
+                        }
                     } else {
                         val sendMessage = messageService.getMessageWithKeyboard(
                                 chatId,
@@ -65,9 +66,7 @@ and give good description to attract more people to join.
                 BotCommand.SET_LOCATION -> messageService.requestLocation(chatId)
                 BotCommand.VOID -> TODO()
                 BotCommand.GROUPS -> {
-                    val sendMessage = messageService.getMessageWithKeyboard(chatId, "Select group type",
-                            keyboardService.infoGroupOptionsKeyboard())
-                    messageService.sendMessage(sendMessage)
+                    sendMainMenu(chatId)
                 }
                 BotCommand.PUBLICGROUPS -> messageService.sendMessage(chatId, messageService.publicGroupsInfo())
                 BotCommand.EVENTS -> {
@@ -77,6 +76,17 @@ and give good description to attract more people to join.
                 }
             }
         }
+    }
+
+    private fun sendMainMenu(userId: Long) {
+
+        val sendMessage = messageService.getMessageWithKeyboard(userId, "Select group type",
+                keyboardService.getMenuKeyboardScreenOne())
+        val sentMessageId = messageService.sendMessage(sendMessage)
+
+        val user = userService.findByUserId(userId.toInt())
+
+        user?.lastMessageId = sentMessageId
     }
 
     private fun joinTeamByToken(token: String, user: UserInfo): String {

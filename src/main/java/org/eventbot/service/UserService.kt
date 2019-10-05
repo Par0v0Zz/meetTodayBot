@@ -45,11 +45,11 @@ open class UserService(
         return UserInfo(id, firstName, lastName, createdDate = Date())
     }
 
-    fun getExistingUser(userId: Int?): UserInfo {
-        return findByUserId(userId).orElseThrow { IllegalStateException("Existing user not found for ID: " + userId!!) }
+    fun getExistingUser(userId: Int): UserInfo {
+        return findByUserId(userId) ?: throw IllegalStateException("Existing user not found for ID: $userId")
     }
 
-    fun findByUserId(userId: Int?): Optional<UserInfo> {
+    fun findByUserId(userId: Int): UserInfo? {
         return userRepository.findByUserId(userId)
     }
 

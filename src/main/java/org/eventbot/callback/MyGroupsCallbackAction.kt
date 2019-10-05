@@ -9,14 +9,14 @@ import org.springframework.stereotype.Component
 
 @Component
 class MyGroupsCallbackAction(
-        private val GroupRepository: GroupRepository,
+        private val groupRepository: GroupRepository,
         private val messageService: MessageService,
         private val keyboardService: KeyboardService
 ) : CallbackAction {
 
     override fun doAction(context: Map<CallbackParams, Any>): String? {
         val userInfo = context[CallbackParams.USER_INFO] as UserInfo
-        val listOfGroups = GroupRepository.findByCreator(userInfo)
+        val listOfGroups = groupRepository.findByCreator(userInfo)
 
         if (listOfGroups.isEmpty()) {
             messageService.sendMessage(context[CallbackParams.CHAT_ID] as Long, "No groups found")

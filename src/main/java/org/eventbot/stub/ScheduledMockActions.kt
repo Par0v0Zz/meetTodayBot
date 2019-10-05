@@ -22,7 +22,7 @@ open class ScheduledMockActions(
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     @Transactional
-    @Scheduled(cron = "*/10 * * * * *") // every N sec
+    @Scheduled(cron = "*/180 * * * * *") // every N sec
     @Throws(TelegramApiException::class)
     open fun doFrequently() {
         logger.info("Adding mock user to random group")

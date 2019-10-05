@@ -102,7 +102,7 @@ class PairBot : TelegramLongPollingBot() {
 
 
     private fun isNew(currentUser: User): Boolean {
-        return !userService!!.findByUserId(currentUser.id).isPresent
+        return userService!!.findByUserId(currentUser.id) == null
     }
 
 

@@ -5,6 +5,7 @@ enum class Callback {
     NEW_GROUP,
     ACCEPT_DECLINE,
     VOID,
+    GROUPS,
     ALL_GROUPS,
     MY_GROUPS,
     RENAME_GROUP,
@@ -13,5 +14,6 @@ enum class Callback {
     LUNCH,
     ALL_EVENTS,
     ACCEPTED_EVENTS,
-    ADD_DESCRIPTION
+    ADD_DESCRIPTION,
+    SETTING
 }

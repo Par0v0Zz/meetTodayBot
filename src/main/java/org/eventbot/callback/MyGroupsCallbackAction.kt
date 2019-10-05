@@ -15,15 +15,18 @@ class MyGroupsCallbackAction(
 ) : CallbackAction {
 
     override fun doAction(context: Map<CallbackParams, Any>): String? {
-        val listOfGroups = GroupRepository.findByCreator(context[CallbackParams.USER_INFO] as UserInfo)
+        val userInfo = context[CallbackParams.USER_INFO] as UserInfo
+        val listOfGroups = GroupRepository.findByCreator(userInfo)
 
         if (listOfGroups.isEmpty()) {
             messageService.sendMessage(context[CallbackParams.CHAT_ID] as Long, "No groups found")
         } else {
-            messageService.sendMessage(
-                    context[CallbackParams.CHAT_ID] as Long,
-                    messageService.groupList(listOfGroups),
-                    keyboardService.groupsAdminKeyboard(listOfGroups))
+            listOfGroups.stream().forEach {
+                messageService.sendMessage(
+                        context[CallbackParams.CHAT_ID] as Long, (it.name
+                        ?: "" + it.token) + "\n" + it.description + "\n\n",
+                        keyboardService.groupActionsKeyboard(it, userInfo))
+            }
         }
 
         return ""

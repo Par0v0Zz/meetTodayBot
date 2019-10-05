@@ -301,7 +301,10 @@ class MessageService(
     }
 
     fun groupList(groups: Collection<Group>) = groups
-            .joinToString(separator = "\n") { this.inlineLink(it.name ?: "noname group", groupLink(it)) }
+            .joinToString(separator = "\n") {
+                this.inlineLink(it.name ?: "noname group", groupLink(it)) +
+                        "\n" + it.description + "\n\n"
+            }
 
     private fun userLine(user: UserInfo): String {
         return userLink(user)

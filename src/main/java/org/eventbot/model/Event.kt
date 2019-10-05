@@ -1,6 +1,5 @@
 package org.eventbot.model
 
-import org.hibernate.engine.internal.Cascade
 import java.util.Date
 import java.util.HashSet
 import javax.persistence.CascadeType
@@ -20,6 +19,7 @@ class Event(
         var creator: UserInfo,
         var date: Date,
         var private: Boolean,
+        var description: String = "",
         var accepted: EventStatus = EventStatus.NO_RESPONSE,
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         var pk: Long = 0,

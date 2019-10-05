@@ -12,5 +12,6 @@ enum class Callback {
     LEAVE_GROUP,
     LUNCH,
     ALL_EVENTS,
-    ACCEPTED_EVENTS
+    ACCEPTED_EVENTS,
+    ADD_DESCRIPTION
 }

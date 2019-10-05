@@ -8,6 +8,7 @@ import org.eventbot.model.EventStatus.DECLINED
 import org.eventbot.model.EventStatus.NO_RESPONSE
 import org.eventbot.model.Group
 import org.eventbot.model.Participant
+import org.eventbot.model.UserInfo
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
@@ -40,7 +41,7 @@ class KeyboardService {
 
     private fun groupAdminRow(group: Group): List<InlineKeyboardButton> {
         return listOf(button(
-                "group " + (group.name ?: "noname") + " show participants",
+                "group " + (group.name ?: group.token) + " show participants",
                 Callback.GROUP_INFO.toString()
         ))
     }
@@ -62,13 +63,25 @@ class KeyboardService {
         )
     }
 
-    fun groupActionsKeyboard(group: Group): InlineKeyboardMarkup {
-        return getOneRowKeyboard(
+    fun groupActionsKeyboard(group: Group, userInfo: UserInfo): InlineKeyboardMarkup {
+
+        val twoButtonsKeyboard = getOneRowKeyboard(
                 button("Invite for lunch!",
                         Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.LUNCH.toString(), group.pk)),
                 button("Leave group",
                         Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.LEAVE_GROUP.toString(), group.pk))
         )
+
+        val threeButtonsKeyboard = getOneRowKeyboard(
+                button("Invite for lunch!",
+                        Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.LUNCH.toString(), group.pk)),
+                button("Leave group",
+                        Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.LEAVE_GROUP.toString(), group.pk)),
+                button("Add group description",
+                        Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.ADD_DESCRIPTION.toString(), group.pk))
+        )
+        return if (group.creator == userInfo) threeButtonsKeyboard else twoButtonsKeyboard
+
     }
 
     fun getInviteKeyboard(event: Event): InlineKeyboardMarkup {

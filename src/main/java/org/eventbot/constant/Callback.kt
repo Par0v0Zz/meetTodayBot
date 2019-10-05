@@ -7,5 +7,6 @@ enum class Callback {
     VOID,
     ALL_GROUPS,
     MY_GROUPS,
+    RENAME_GROUP,
     GROUP_INFO
 }

@@ -6,5 +6,6 @@ enum class ChatUpdateHandlerFlow {
     COMMAND,
     CHAT,
     SET_LOCATION,
-    VOID
+    VOID,
+    FREE_TEXT_INPUT
 }

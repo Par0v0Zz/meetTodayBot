@@ -1,23 +1,27 @@
 package org.eventbot.telegram
 
 import com.google.common.base.Preconditions
-import org.slf4j.Logger
+import org.eventbot.constant.ChatUpdateHandlerFlow
+import org.eventbot.constant.ChatUpdateHandlerFlow.CALLBACK
+import org.eventbot.constant.ChatUpdateHandlerFlow.CHAT
+import org.eventbot.constant.ChatUpdateHandlerFlow.COMMAND
+import org.eventbot.constant.ChatUpdateHandlerFlow.FREE_TEXT_INPUT
+import org.eventbot.constant.ChatUpdateHandlerFlow.MEMBER_REMOVED
+import org.eventbot.constant.ChatUpdateHandlerFlow.SET_LOCATION
+import org.eventbot.constant.ChatUpdateHandlerFlow.VOID
+import org.eventbot.service.UserService
+import org.eventbot.telegram.handler.ChatUpdateHandler
+import org.eventbot.telegram.handler.impl.CommandHandler
+import org.eventbot.telegram.handler.impl.FreeTextInputHandler
+import org.eventbot.telegram.handler.impl.SetLocationHandler
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
-import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import org.eventbot.constant.ChatUpdateHandlerFlow
-import org.eventbot.service.UserService
-import org.eventbot.telegram.handler.ChatUpdateHandler
-import org.eventbot.telegram.handler.impl.CommandHandler
-import org.eventbot.telegram.handler.impl.SetLocationHandler
-
-import org.eventbot.constant.ChatUpdateHandlerFlow.*
 
 
 @Component
@@ -37,6 +41,8 @@ class PairBot : TelegramLongPollingBot() {
     private val setLocationHandler: SetLocationHandler? = null
     @Autowired
     private val userService: UserService? = null
+    @Autowired
+    private lateinit var freeTextInputHandler: FreeTextInputHandler
 
     override fun onUpdateReceived(update: Update) {
         try {
@@ -79,6 +85,18 @@ class PairBot : TelegramLongPollingBot() {
                 LOG.error("Setting location failed", e)
             }
 
+            FREE_TEXT_INPUT -> try {
+                freeTextInputHandler.handle(update)
+            } catch (e: TelegramApiException) {
+                LOG.error("Frocessing user input failed", e)
+            }
+
+            MEMBER_REMOVED -> {
+            }
+            CHAT -> {
+            }
+            VOID -> {
+            }
         }
     }
 
@@ -92,7 +110,7 @@ class PairBot : TelegramLongPollingBot() {
         when (handlerFlow) {
             CALLBACK -> return update.callbackQuery.from
             MEMBER_REMOVED -> return update.message.leftChatMember
-            CHAT, COMMAND, SET_LOCATION -> return update.message.from
+            CHAT, COMMAND, SET_LOCATION, FREE_TEXT_INPUT -> return update.message.from
             else -> return null
         }
     }
@@ -124,6 +142,11 @@ class PairBot : TelegramLongPollingBot() {
         if (message.leftChatMember != null) {
             return MEMBER_REMOVED
         }
+
+        if (message.hasText() && message.text.startsWith(">")) {
+            return FREE_TEXT_INPUT
+        }
+
         return if (message.chat.isUserChat!!) {
             CHAT
         } else VOID

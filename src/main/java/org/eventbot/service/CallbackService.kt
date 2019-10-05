@@ -1,18 +1,21 @@
 package org.eventbot.service
 
 import com.google.common.base.Splitter
+import org.eventbot.callback.AcceptDeclineGroupCallbackAction
 import org.eventbot.callback.AllGroupsCallbackAction
 import org.eventbot.callback.CallbackParams
 import org.eventbot.callback.MyGroupsCallbackAction
+import org.eventbot.callback.NewGroupCallbackAction
+import org.eventbot.callback.RenameGroupCallbackAction
 import org.eventbot.constant.BotConstants.CALLBACK_DATA_SEPARATOR
 import org.eventbot.constant.Callback
-import org.eventbot.model.Event
-import org.eventbot.model.EventStatus
-import org.eventbot.model.EventStatus.ACCEPTED
-import org.eventbot.model.EventStatus.DECLINED
-import org.eventbot.model.EventStatus.NO_RESPONSE
-import org.eventbot.model.Group
-import org.eventbot.model.ParticipantId
+import org.eventbot.constant.Callback.ACCEPT_DECLINE
+import org.eventbot.constant.Callback.ADD_TO_GROUP
+import org.eventbot.constant.Callback.ALL_GROUPS
+import org.eventbot.constant.Callback.MY_GROUPS
+import org.eventbot.constant.Callback.NEW_GROUP
+import org.eventbot.constant.Callback.RENAME_GROUP
+import org.eventbot.constant.Callback.VOID
 import org.eventbot.model.UserInfo
 import org.eventbot.repository.EventRepository
 import org.eventbot.repository.GroupRepository
@@ -30,8 +33,6 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import java.util.Date
-import java.util.UUID
 
 @Transactional
 @Component
@@ -74,92 +75,36 @@ open class CallbackService(
         }
 
         val user = userOpt.get()
-        val chatId = callbackquery.message.chatId
+
+        val params = mutableMapOf(
+                CallbackParams.USER_INFO to user,
+                CallbackParams.CHAT_ID to callbackquery.message.chatId,
+                CallbackParams.MESSAGE_FROM to callbackquery.message.from.id
+        )
+
+        if (callbackParts.size > 2) {
+            params[CallbackParams.ARG] = callbackParts[1]
+        }
+
+        if (callbackParts.size > 3) {
+            params[CallbackParams.ARG2] = callbackParts[2]
+        }
 
         val answerText: String? = when (Callback.valueOf(callbackParts[0])) {
-            Callback.NEW_GROUP -> {
-                val private = java.lang.Boolean.valueOf(callbackParts[1])
-                val group = newGroup(user, private)
-                sendJoinLink(chatId, group)
-                null
-            }
-            Callback.ADD_TO_GROUP -> "ask your peers for a link"
-            Callback.ACCEPT_DECLINE -> {
-                val eventPk = java.lang.Long.valueOf(callbackParts[1])
-
-                val participant = participantRepository.getOne(ParticipantId(user.pk, eventPk))
-
-                val accepted = java.lang.Boolean.valueOf(callbackParts[2])
-
-                participant.accepted = if (accepted) ACCEPTED else DECLINED
-
-                participantRepository.save(participant)
-
-                if (!accepted) {
-                    user.lastDeclineDate = Date()
-                    userRepository.save(user)
-                }
-
-                val event = participant.event
-                updateEvent(event, participant.accepted)
-                updateInvite(event)
-                "ok"
-            }
-            Callback.VOID -> TODO()
-            Callback.ALL_GROUPS -> applicationContext.getBean(AllGroupsCallbackAction::class.java)
-                    .doAction(mapOf(
-                            CallbackParams.USER_INFO to user,
-                            CallbackParams.CHAT_ID to chatId
-                    ))
-            Callback.MY_GROUPS -> applicationContext.getBean(MyGroupsCallbackAction::class.java)
-                    .doAction(mapOf(
-                            CallbackParams.USER_INFO to user,
-                            CallbackParams.CHAT_ID to chatId
-                    ))
+            NEW_GROUP -> applicationContext.getBean(NewGroupCallbackAction::class.java).doAction(params)
+            ADD_TO_GROUP -> "ask your peers for a link"
+            ACCEPT_DECLINE -> applicationContext.getBean(AcceptDeclineGroupCallbackAction::class.java).doAction(params)
+            VOID -> TODO()
+            ALL_GROUPS -> applicationContext.getBean(AllGroupsCallbackAction::class.java).doAction(params)
+            MY_GROUPS -> applicationContext.getBean(MyGroupsCallbackAction::class.java).doAction(params)
+            RENAME_GROUP -> applicationContext.getBean(RenameGroupCallbackAction::class.java).doAction(params)
             Callback.GROUP_INFO -> {
-                messageService.sendMessage(chatId, messageService.groupInfo(user))
+                messageService.sendMessage(callbackquery.message.chatId, messageService.groupInfo(user))
 
                 ""
             }
         }
         sendAnswerCallbackQuery(answerText, false, callbackquery)
-    }
-
-    private fun updateEvent(event: Event, participantAccept: EventStatus) {
-        val responses = event.participants.map { it.accepted }
-
-        if (participantAccept == DECLINED) {
-            event.accepted = DECLINED
-        } else if (responses.all { it == ACCEPTED }) {
-            event.accepted = ACCEPTED
-        }
-
-        if (event.accepted != NO_RESPONSE) {
-            eventRepository.save(event)
-        }
-    }
-
-    private fun updateInvite(event: Event) {
-        messageService.updateToAll(
-                event,
-                messageService::eventDescriptionText,
-                keyboardService::acceptedInviteKeyboard)
-    }
-
-    open fun newGroup(creator: UserInfo, private: Boolean): Group {
-        val group = Group(
-                UUID.randomUUID(),
-                creator,
-                private
-        )
-        group.addMember(creator)
-//        group.addMember(newDummyUser())
-
-        //todo: change to one save with cascade = merge and optional save if new UserInfo ?
-        groupRepository.save(group)
-        userRepository.save(creator)
-
-        return group
     }
 
     /**
@@ -185,15 +130,6 @@ open class CallbackService(
         val callbackData = callbackquery.data
 
         return Splitter.on(CALLBACK_DATA_SEPARATOR).splitToList(callbackData)
-    }
-
-    private fun sendJoinLink(chatId: Long, group: Group) {
-        try {
-            messageService.sendMessage(chatId, messageService.getJoinTeamText(group))
-        } catch (e: TelegramApiException) {
-            LOG.error("Sending join link failed", e)
-        }
-
     }
 
 }

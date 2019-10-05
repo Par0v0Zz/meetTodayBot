@@ -19,6 +19,10 @@ class TimeService {
         return datePlus(date, hours, ChronoUnit.HOURS)
     }
 
+    fun datePlusMinutes(date: Date, amount: Int): Date {
+        return datePlus(date, amount, ChronoUnit.MINUTES)
+    }
+
     fun datePlusDays(date: Date, days: Int): Date {
         return datePlus(date, days, ChronoUnit.DAYS)
     }

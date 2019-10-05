@@ -70,7 +70,9 @@ class MessageService(
 
     @Throws(TelegramApiException::class)
     fun sendMessage(sendMessage: SendMessage): Int {
-
+        if (sendMessage.chatId.toLong() == 0L) {
+            return 0
+        }
         return Optional.ofNullable(bot.execute(sendMessage))
                 .map { it.messageId }
                 .orElse(null)

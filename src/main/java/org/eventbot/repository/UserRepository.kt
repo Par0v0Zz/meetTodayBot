@@ -19,4 +19,7 @@ interface UserRepository : JpaRepository<UserInfo, Long> {
         WHERE :group in u.groups
     """)
     fun findByGroup(group: Group): List<UserInfo>
+
+    fun findByFirstNameContaining(substring: String): List<UserInfo>
+
 }

@@ -1,4 +1,4 @@
-package org.eventbot
+package org.eventbot.stub
 
 import org.eventbot.model.Group
 import org.eventbot.model.UserInfo
@@ -11,17 +11,28 @@ import javax.annotation.PostConstruct
 
 @Component
 @Profile("test_local")
-class LocalDataInit(
+class LocalTestDataInit(
         open var groupRepository: GroupRepository,
         open var userRepository: UserRepository) {
     @PostConstruct
     fun initData(){
 
-        createDummyGroup("Dummy lunches")
+        createDummyUser()
+        createDummyUser()
+        createDummyUser()
+        createDummyGroup("Dummy lunches", createDummyUser())
+
     }
 
-    private fun createDummyGroup(name: String) {
-        val creator = UserInfo(0, "DummyUser0")
+    private fun createDummyUser(): UserInfo {
+        val user = UserInfo(0, "DummyUser" + Date())
+
+        userRepository.save(user)
+        return user
+    }
+
+    private fun createDummyGroup(name: String, creator: UserInfo) {
+
         val group = Group(UUID.randomUUID(), creator, false, name, name)
 
         userRepository.save(creator)

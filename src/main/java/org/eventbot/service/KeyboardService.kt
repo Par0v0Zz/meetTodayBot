@@ -31,19 +31,19 @@ class KeyboardService {
                         Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.NEW_GROUP.toString(), java.lang.Boolean.TRUE)
                 ))
 
-    fun groupsAdminKeyboard(groups: Collection<Group>): InlineKeyboardMarkup {
-        return getMultiRowKeyboard(groupAdminRows(groups))
-    }
-
-    private fun groupAdminRows(groups: Collection<Group>): List<List<InlineKeyboardButton>> {
-        return groups.map { groupAdminRow(it) }
-    }
-
-    private fun groupAdminRow(group: Group): List<InlineKeyboardButton> {
-        return listOf(button(
-                "group " + (group.name ?: group.token) + " show participants",
-                Callback.GROUP_INFO.toString()
-        ))
+    fun groupsAdminKeyboard(group: Group): InlineKeyboardMarkup {
+        return getMultiRowKeyboard(listOf(
+                listOf(
+                        button("Group " + (group.name ?: group.token) + ": show participants",
+                                Callback.GROUP_INFO.toString()
+                        )
+                ),
+                listOf(
+                        button("Invite for lunch!",
+                                Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.LUNCH.toString(), group.pk)),
+                        button("Leave group",
+                                Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.LEAVE_GROUP.toString(), group.pk))
+                )))
     }
 
     val removeKeyboardMarkup: InlineKeyboardMarkup
@@ -51,14 +51,14 @@ class KeyboardService {
 
     fun infoGroupOptionsKeyboard(): InlineKeyboardMarkup {
         return getOneRowKeyboard(
-                button("All groups", Callback.ALL_GROUPS.toString()),
-                button("My groups", Callback.MY_GROUPS.toString())
+                button("Groups I'm in", Callback.ALL_GROUPS.toString()),
+                button("Groups I've created", Callback.MY_GROUPS.toString())
         )
     }
 
     fun infoEventOptionsKeyboard(): InlineKeyboardMarkup {
         return getOneRowKeyboard(
-                button("All events", Callback.ALL_EVENTS.toString()),
+                button("All my events", Callback.ALL_EVENTS.toString()),
                 button("Only accepted", Callback.ACCEPTED_EVENTS.toString())
         )
     }
@@ -72,14 +72,18 @@ class KeyboardService {
                         Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.LEAVE_GROUP.toString(), group.pk))
         )
 
-        val threeButtonsKeyboard = getOneRowKeyboard(
-                button("Invite for lunch!",
-                        Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.LUNCH.toString(), group.pk)),
-                button("Leave group",
-                        Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.LEAVE_GROUP.toString(), group.pk)),
-                button("Add group description",
-                        Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.ADD_DESCRIPTION.toString(), group.pk))
-        )
+        val threeButtonsKeyboard = getMultiRowKeyboard(listOf(
+                listOf(
+                        button("Invite for lunch!",
+                                Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.LUNCH.toString(), group.pk)),
+                        button("Leave group",
+                                Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.LEAVE_GROUP.toString(), group.pk))
+                ),
+                listOf(
+                        button("Add group description",
+                                Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.ADD_DESCRIPTION.toString(), group.pk)),
+                        button("Rename group", Callback.RENAME_GROUP.toString())
+                )))
         return if (group.creator == userInfo) threeButtonsKeyboard else twoButtonsKeyboard
 
     }

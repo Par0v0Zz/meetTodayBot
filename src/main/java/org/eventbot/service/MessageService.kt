@@ -146,7 +146,7 @@ class MessageService(
     fun inviteText(user: UserInfo, pair: Event): String {
 //        val eventDescription = eventDescriptionText(user, pair)
 
-        return String.format("How about lunch today?")
+        return String.format("Hey pal, how about lunch today at 13:00? :)")
     }
 
     //TODO: write correct description handling
@@ -310,7 +310,7 @@ class MessageService(
         return botUrl + "?start=" + group.token
     }
 
-    private fun inlineLink(label: String, link: String): String {
+    fun inlineLink(label: String, link: String): String {
         return String.format("[%s](%s)", label, link)
     }
 

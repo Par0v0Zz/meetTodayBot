@@ -76,7 +76,7 @@ class PairBot : TelegramLongPollingBot() {
             COMMAND -> try {
                 callCommandHandlers(update)
             } catch (e: TelegramApiException) {
-                LOG.error("Command processing failed", e)
+                LOG.error("Command processing failed {}", e.toString(), e)
             }
 
             SET_LOCATION -> try {

@@ -10,5 +10,7 @@ enum class Callback {
     RENAME_GROUP,
     GROUP_INFO,
     LEAVE_GROUP,
-    LUNCH
+    LUNCH,
+    ALL_EVENTS,
+    ACCEPTED_EVENTS
 }

@@ -48,10 +48,17 @@ class KeyboardService {
     val removeKeyboardMarkup: InlineKeyboardMarkup
         get() = getOneRowKeyboard()
 
-    fun infoOptionsKeyboard(): InlineKeyboardMarkup {
+    fun infoGroupOptionsKeyboard(): InlineKeyboardMarkup {
         return getOneRowKeyboard(
                 button("All groups", Callback.ALL_GROUPS.toString()),
                 button("My groups", Callback.MY_GROUPS.toString())
+        )
+    }
+
+    fun infoEventOptionsKeyboard(): InlineKeyboardMarkup {
+        return getOneRowKeyboard(
+                button("All events", Callback.ALL_EVENTS.toString()),
+                button("Only accepted", Callback.ACCEPTED_EVENTS.toString())
         )
     }
 

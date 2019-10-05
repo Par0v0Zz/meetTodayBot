@@ -60,11 +60,16 @@ open class CommandService(
                 BotCommand.SET_LOCATION -> messageService.requestLocation(chatId)
                 BotCommand.VOID -> TODO()
                 BotCommand.GROUPS -> {
-                    val sendMessage = messageService.getMessageWithKeyboard(chatId, "Select desired group type",
-                            keyboardService.infoOptionsKeyboard())
+                    val sendMessage = messageService.getMessageWithKeyboard(chatId, "Select group type",
+                            keyboardService.infoGroupOptionsKeyboard())
                     messageService.sendMessage(sendMessage)
                 }
                 BotCommand.PUBLIC_GROUPS -> messageService.sendMessage(chatId, messageService.publicGroupsInfo())
+                BotCommand.EVENTS -> {
+                    val sendMessage = messageService.getMessageWithKeyboard(chatId, "Select event type",
+                            keyboardService.infoEventOptionsKeyboard())
+                    messageService.sendMessage(sendMessage)
+                }
             }
         }
     }

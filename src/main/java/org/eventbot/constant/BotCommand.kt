@@ -7,5 +7,6 @@ enum class BotCommand {
     VOID,
     GROUPS,
     SET_LOCATION,
-    PUBLIC_GROUPS
+    PUBLIC_GROUPS,
+    EVENTS
 }

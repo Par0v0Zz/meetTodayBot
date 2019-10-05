@@ -57,6 +57,15 @@ class KeyboardService {
     }
 
     fun infoEventOptionsKeyboard(): InlineKeyboardMarkup {
+        getMultiRowKeyboard(listOf(
+                listOf(
+                        button("All my events", Callback.ALL_EVENTS.toString()),
+                        button("Only accepted", Callback.ACCEPTED_EVENTS.toString())
+                ),
+                listOf(
+                        button("New event", Callback.ALL_EVENTS.toString())
+                )
+        ))
         return getOneRowKeyboard(
                 button("All my events", Callback.ALL_EVENTS.toString()),
                 button("Only accepted", Callback.ACCEPTED_EVENTS.toString())

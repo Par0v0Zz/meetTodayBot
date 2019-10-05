@@ -8,8 +8,11 @@ import org.eventbot.repository.EventRepository
 import org.eventbot.repository.ParticipantRepository
 import org.eventbot.service.KeyboardService
 import org.eventbot.service.MessageService
+import org.springframework.stereotype.Component
 import java.util.Date
 
+
+@Component
 class AcceptedEventsCallbackAction(
         val eventsRepository: EventRepository,
         val messageService: MessageService,

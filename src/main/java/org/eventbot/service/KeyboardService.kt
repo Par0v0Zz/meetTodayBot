@@ -6,6 +6,7 @@ import org.eventbot.constant.Callback
 import org.eventbot.model.Event
 import org.eventbot.model.EventStatus.DECLINED
 import org.eventbot.model.EventStatus.NO_RESPONSE
+import org.eventbot.model.Group
 import org.eventbot.model.Participant
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
@@ -28,6 +29,21 @@ class KeyboardService {
                         "New private group",
                         Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.NEW_GROUP.toString(), java.lang.Boolean.TRUE)
                 ))
+
+    fun groupsAdminKeyboard(groups: Collection<Group>): InlineKeyboardMarkup{
+        return getMultiRowKeyboard(groupAdminRows(groups))
+    }
+
+    private fun groupAdminRows(groups: Collection<Group>): List<List<InlineKeyboardButton>> {
+        return groups.map { groupAdminRow(it) }
+    }
+
+    private fun groupAdminRow(group: Group): List<InlineKeyboardButton> {
+        return listOf(button(
+                "group " + (group.name?: "noname") + " show participants",
+                Callback.GROUP_INFO.toString()
+        ))
+    }
 
     val removeKeyboardMarkup: InlineKeyboardMarkup
         get() = getOneRowKeyboard()

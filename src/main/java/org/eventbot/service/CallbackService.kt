@@ -116,6 +116,11 @@ open class CallbackService(
                             CallbackParams.USER_INFO to user,
                             CallbackParams.CHAT_ID to chatId
                     ))
+            Callback.GROUP_INFO -> {
+                messageService.sendMessage(chatId, messageService.groupInfo(user))
+
+                ""
+            }
         }
         sendAnswerCallbackQuery(answerText, false, callbackquery)
     }

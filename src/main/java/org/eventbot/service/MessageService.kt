@@ -275,7 +275,7 @@ class MessageService(
     }
 
     fun publicGroupsInfo(): String {
-        val groups = groupRepository.findAllPublicGroups()
+        val groups = groupRepository.findByPrivateFalse()
         val groupList = groupList(groups)
 
 //        val groupInlineLink = inlineLink("group", groupLink(group))
@@ -286,11 +286,11 @@ class MessageService(
         """.trimMargin()
     }
 
-    open fun groupList(groups: Set<Group>) = groups
+    fun groupList(groups: Collection<Group>) = groups
             .joinToString(separator = "\n") { this.inlineLink(it.name ?: "noname group", groupLink(it)) }
 
     private fun userLine(user: UserInfo): String {
-        return gameService.xpShort(user) + " " + userLink(user)
+        return userLink(user)
     }
 
     fun getJoinTeamText(group: Group): String {

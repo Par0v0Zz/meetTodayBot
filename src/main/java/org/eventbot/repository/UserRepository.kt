@@ -22,4 +22,6 @@ interface UserRepository : JpaRepository<UserInfo, Long> {
 
     fun findByFirstNameContaining(substring: String): List<UserInfo>
 
+    fun findByIsBot(isBot: Boolean): List<UserInfo>
+
 }

@@ -44,7 +44,9 @@ class UserInfo(
         var settings: MutableSet<UserSetting> = HashSet(),
         var xp: Int = 0,
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var pk: Long = 0
+        var pk: Long = 0,
+
+        var isBot: Boolean = false
 ) {
         override fun equals(other: Any?): Boolean {
                 if (this === other) return true

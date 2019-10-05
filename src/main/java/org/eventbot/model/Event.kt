@@ -24,7 +24,8 @@ class Event(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         var pk: Long = 0,
         @OneToMany(cascade = [CascadeType.PERSIST], mappedBy = "event")
-        var participants: MutableSet<Participant> = HashSet()
+        var participants: MutableSet<Participant> = HashSet(),
+        var name: String = ""
 ) {
 
     fun addParticipant(participant: Participant) {

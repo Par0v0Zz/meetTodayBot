@@ -50,7 +50,7 @@ open class ScheduledMockActions(
 
     }
 
-    private fun randomDummy() = userRepository.findByFirstNameContaining("Dummy").random()
+    private fun randomDummy() = userRepository.findByIsBot(isBot = true).random()
 
     private fun joinRandomGroup(user: UserInfo) {
         val randomGroup = randomPublicGroup()

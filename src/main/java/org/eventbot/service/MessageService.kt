@@ -295,7 +295,7 @@ class MessageService(
     fun groupList(groups: Collection<Group>) = groups
             .joinToString(separator = "\n") {
                 this.inlineLink(it.name ?: "noname group", groupLink(it)) +
-                        "\n" + it.description + "\n\n"
+                        "\n" + it.description + "\n"
             }
 
     fun getJoinTeamText(group: Group): String {

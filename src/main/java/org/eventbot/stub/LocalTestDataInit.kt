@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.util.UUID
 import javax.annotation.PostConstruct
+import kotlin.random.Random
 
 @Component
 @Profile("test_local")
@@ -15,31 +16,40 @@ class LocalTestDataInit(
         open var groupRepository: GroupRepository,
         open var userRepository: UserRepository) {
 
-    private val firstnames = listOf("Muhammad", "Sai", "Madhavaditya", "Raahithya", "Rudra", "Advaith", "Shivansh", "Zayn",
-            "Gautam", "Agastya", "Aadesh", "Amandeep", "Bharat", "Nakul", "Mehul", "Lalit", "Karthik", "Vijay", "Vinod", "Kamal")
+    private val femaleFirstnames = listOf("Galina", "Larisa", "Anfisa", "Raisa", "Natasha", "Nadiya", "Tatiana", "Valentina", "Veronika",
+            "Zenya", "Alena", "Alina", "Svetlana", "Katya")
 
-    private val lastnames = listOf("Feliciano", "Fayre", "Chukwueneka", "Canciana", "Berengár", "Bárbara", "Arama", "Alipha",
-            "Affonso", "Flávia", "Francisca", "Nathalia", "Okorie", "Oson", "Shel", "Tequila", "Tor", "Tristao", "Zoie", "Gijima")
+    private val femaleLastnames = listOf("Kuznetsova", "Popova", "Vasilieva", "Petrova", "Sokolova", "Fedorova", "Volkova", "Lebedeva",
+            "Egorova", "Pavlova", "Kozlova", "Stepanova", "Nikolaeva", "Orlova")
+
+    private val maleFirstnames = listOf("Kirill", "Timofei", "Tolik", "Matvei", "Danila", "Maksim")
+
+    private val maleLastnames = listOf("Kuznetsov", "Popov", "Vasiliev", "Petrov", "Sokolov", "Fedorov", "Volkov", "Lebedev",
+            "Egorov", "Pavlov", "Kozlov", "Stepanov", "Nikolaev", "Orlov")
 
     @PostConstruct
     fun initData() {
-
-        createDummyGroup("Dummy lunches", createDummyUser())
-        createDummyGroup("Dummy Kicker", createDummyUser())
-        createDummyGroup("Dummy Guitar Hero", createDummyUser())
-        createDummyGroup("Dummy Cinema", createDummyUser())
-        createDummyGroup("Dummy Soccer", createDummyUser())
-        createDummyGroup("Dummy Evening Run", createDummyUser())
-        createDummyGroup("Dummy Boardgames", createDummyUser())
-        createDummyGroup("Dummy Spanish Speaking Club", createDummyUser())
+        createDummyGroup("lunches", createDummyUser())
+        createDummyGroup("Kicker", createDummyUser())
+        createDummyGroup("Guitar Hero", createDummyUser())
+        createDummyGroup("Cinema", createDummyUser())
+        createDummyGroup("Soccer", createDummyUser())
+        createDummyGroup("Evening Run", createDummyUser())
+        createDummyGroup("Boardgames", createDummyUser())
+        createDummyGroup("Spanish Speaking Club", createDummyUser())
 
     }
 
     private fun createDummyUser(): UserInfo {
+        val female: Boolean = Random.nextBoolean()
+        val firstnamesSet = if (female) femaleFirstnames else maleFirstnames
+        val lastnamesSet = if (female) femaleLastnames else maleLastnames
+
         val user = UserInfo(
                 userId = 0,
-                firstName = "Dummy" + firstnames.shuffled().take(1)[0],
-                lastName = lastnames.shuffled().take(1)[0]
+                firstName = firstnamesSet.random(),
+                lastName = lastnamesSet.random(),
+                isBot = true
         )
 
         userRepository.save(user)

@@ -1,6 +1,7 @@
 package org.eventbot.callback
 
 import org.apache.commons.lang3.BooleanUtils
+import org.apache.commons.lang3.StringUtils.isNotEmpty
 import org.eventbot.CallbackAction
 import org.eventbot.model.Event
 import org.eventbot.model.EventStatus
@@ -39,6 +40,7 @@ class AcceptDeclineGroupCallbackAction(
         val event = participant.event
         updateEvent(event, participant)
         updateInvite(event)
+        sendListOfMembers(event, context[CallbackParams.CHAT_ID] as Long)
         return "ok"
     }
 
@@ -54,6 +56,18 @@ class AcceptDeclineGroupCallbackAction(
 //                event,
 //                messageService::eventDescriptionText,
 //                keyboardService::acceptedInviteKeyboard)
+    }
+
+    private fun sendListOfMembers(event: Event, chatId: Long) {
+        val messageText = event.participants
+                .map { "${it.user.firstName} ${it.user.lastName}" }
+                .joinToString("\n")
+
+        if (isNotEmpty(messageText)) {
+            messageService.sendMessage(chatId, "Following users accepted the event:\n$messageText")
+        } else {
+            messageService.sendMessage(chatId, "Nobody accepted the event")
+        }
     }
 
 }

@@ -112,7 +112,7 @@ open class CallbackService(
             LUNCH -> applicationContext.getBean(CreateEventCallbackAction::class.java).doAction(params)
             ADD_DESCRIPTION -> applicationContext.getBean(AddDescriptionCallbackAction::class.java).doAction(params)
             Callback.GROUP_INFO -> {
-                messageService.sendMessage(callbackquery.message.chatId, messageService.groupInfo(user))
+                messageService.sendMessage(callbackquery.message.chatId, messageService.groupInfo(user, callbackParts[1]))
 
                 ""
             }

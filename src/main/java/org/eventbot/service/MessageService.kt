@@ -35,6 +35,7 @@ import java.util.Comparator.nullsFirst
 import java.util.Date
 import java.util.HashMap
 import java.util.Optional
+import java.util.UUID
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KFunction2
 
@@ -267,8 +268,13 @@ class MessageService(
         }
     }
 
-    fun groupInfo(user: UserInfo): String {
-        val group = if (user.groups.isEmpty()) null else user.groups.random()
+    fun groupInfo(user: UserInfo, groupName: String): String {
+        val group: Group?
+        if (!groupName.contains("-")) {
+            group = groupRepository.findByName(groupName)
+        } else {
+            group = groupRepository.findByToken(UUID.fromString(groupName)).get()
+        }
         if (group != null) {
             val memberList = group.members
                     .sortedWith(nullsFirst(compareBy(UserInfo::firstName)))

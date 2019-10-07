@@ -147,7 +147,7 @@ class MessageService(
     fun inviteText(user: UserInfo, pair: Event): String {
         return """
         ${userInfoLinkResolver.resolve(pair.creator)}
-        Hey pal, how about lunch today at 13:00? :)?
+        Hey pal, how about sharing meal today? :)?
         """.trimIndent()
     }
 

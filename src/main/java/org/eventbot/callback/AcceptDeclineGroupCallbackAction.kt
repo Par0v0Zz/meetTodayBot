@@ -71,7 +71,7 @@ class AcceptDeclineGroupCallbackAction(
             |following users already accepted the event:
             |$messageText
             """.trimMargin())
-        } else {
+        }  else {
             messageService.sendMessage(chatId, "Nobody accepted the event")
         }
     }

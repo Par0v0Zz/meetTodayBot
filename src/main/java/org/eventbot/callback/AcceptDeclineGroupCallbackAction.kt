@@ -66,8 +66,12 @@ class AcceptDeclineGroupCallbackAction(
                 .joinToString("\n")
 
         if (isNotEmpty(messageText)) {
-            messageService.sendMessage(chatId, "${userInfoLinkResolver.resolve(event.creator)} created the event, following users already accepted the event:\n$messageText")
-        } else {
+            messageService.sendMessage(chatId, """
+            |${userInfoLinkResolver.resolve(event.creator)} created the event,
+            |following users already accepted the event:
+            |$messageText
+            """.trimMargin())
+        }  else {
             messageService.sendMessage(chatId, "Nobody accepted the event")
         }
     }

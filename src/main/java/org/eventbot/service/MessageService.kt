@@ -35,6 +35,7 @@ import java.util.Comparator.nullsFirst
 import java.util.Date
 import java.util.HashMap
 import java.util.Optional
+import java.util.UUID
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KFunction2
 
@@ -146,7 +147,7 @@ class MessageService(
     fun inviteText(user: UserInfo, pair: Event): String {
         return """
         ${userInfoLinkResolver.resolve(pair.creator)}
-        Hey pal, how about lunch today at 13:00? :)?
+        Hey pal, how about sharing meal today? :)?
         """.trimIndent()
     }
 
@@ -267,8 +268,13 @@ class MessageService(
         }
     }
 
-    fun groupInfo(user: UserInfo): String {
-        val group = if (user.groups.isEmpty()) null else user.groups.random()
+    fun groupInfo(user: UserInfo, groupName: String): String {
+        val group: Group?
+        if (!groupName.contains("-")) {
+            group = groupRepository.findByName(groupName)
+        } else {
+            group = groupRepository.findByToken(UUID.fromString(groupName)).get()
+        }
         if (group != null) {
             return printParticipantsOfGroup(group)
         } else {

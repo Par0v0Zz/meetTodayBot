@@ -35,7 +35,8 @@ class KeyboardService {
         return getMultiRowKeyboard(listOf(
                 listOf(
                         button("Group " + (group.name ?: group.token) + ": show participants",
-                                Callback.GROUP_INFO.toString()
+                                Joiner.on(CALLBACK_DATA_SEPARATOR).join(Callback.GROUP_INFO.toString(), group.name
+                                        ?: group.token)
                         )
                 ),
                 listOf(

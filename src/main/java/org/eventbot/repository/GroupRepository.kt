@@ -19,4 +19,6 @@ interface GroupRepository : JpaRepository<Group, Long> {
 
     fun findByPk(pk: Long): Group
 
+    fun findByName(name: String): Group?
+
 }

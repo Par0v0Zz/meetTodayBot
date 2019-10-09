@@ -49,9 +49,9 @@ and give good description to attract more people to join.
                     val messageText = message.text
                     if (commandText.length < messageText.length - 1) {
                         val groupToken = messageText.substring(commandText.length + 1).trim()
-                        joinTeamByToken(groupToken, user)
+                        var groupName = joinTeamByToken(groupToken, user)
 
-                        val messageToSend = messageService.getMessage(chatId, messageService.groupInfo(user))
+                        val messageToSend = messageService.getMessage(chatId, messageService.groupInfo(user, groupName))
                         messageService.sendMessage(messageToSend)
 
                     } else {
@@ -79,14 +79,16 @@ and give good description to attract more people to join.
         }
     }
 
-    private fun joinTeamByToken(token: String, user: UserInfo) {
+    private fun joinTeamByToken(token: String, user: UserInfo): String {
         val groupOpt = groupRepository.findByToken(UUID.fromString(token))
-
+        var groupName = " "
         groupOpt.ifPresent { group ->
             group.addMember(user)
             groupRepository.save(group)
             userRepository.save(user)
+            groupName = group.name ?: group.token.toString()
         }
+        return groupName
     }
 
     private fun extractCommandText(message: Message): Optional<String> {

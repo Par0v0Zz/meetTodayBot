@@ -3,6 +3,7 @@ package org.eventbot.constant
 import java.util.HashMap
 
 enum class MenuScreen(private val id: Int) {
+    S_00_SELF(-1),
     S_0_MAIN(0),
     S_1_GROUPS(1),
     S_2_GROUP_ADMIN(2),

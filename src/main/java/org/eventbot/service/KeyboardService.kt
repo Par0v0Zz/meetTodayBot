@@ -122,7 +122,6 @@ class KeyboardService(val userService: UserService, val groupRepository: GroupRe
             MenuScreen.S_1_GROUPS -> addGroupsButtons(rows)
             MenuScreen.S_2_GROUP_ADMIN -> addGroupAdminButtons(context, rows)
             MenuScreen.S_2_GROUPS_ALL -> addGroupListButtons(context, rows)
-            MenuScreen.S_2_GROUPS_ALL -> addGroupListButtons(context, rows)
         }
 
         return getMultiRowKeyboard(rows)

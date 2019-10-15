@@ -19,7 +19,7 @@ enum class MenuItem private constructor(private val id: Int, private val targetS
         }
         when (this) {
             BACK -> return currentScreen.parent
-            else -> throw IllegalStateException("can't find target screen for screen $currentScreen, menu item = $this")
+            else -> throw IllegalStateException("can't find target screen for screen $currentScreen, navigation item = $this")
         }
     }
 

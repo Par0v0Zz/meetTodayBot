@@ -4,8 +4,9 @@ class Menu(){
     lateinit var root: Node
 
     init{
-
-        root = Node(ArrayList(), MenuScreenObject(0, "main"), )
+        s2groupsAll = Node(ArrayList(), 3, "All groups", )
+        root = Node(ArrayList(), MenuScreenObject(0, "main"))
+        
 
     }
 

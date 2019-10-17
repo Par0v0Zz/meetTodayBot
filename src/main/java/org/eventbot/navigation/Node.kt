@@ -2,11 +2,16 @@ package org.eventbot.navigation
 
 class Node (
         var children: MutableList<Node>,
-        var screen: MenuScreenObject,
-        var button: MenuItemObject = ,
+        val screenId: Int,
+        val screenLabel: String,
+        var button: MenuItemObject? = null,
         var parent: Node? = null
 ){
     fun id(): String {
-        return "${screen.id};${button.i}"
+        return "${screenId};${button?.id}"
+    }
+
+    override fun toString(): String {
+        return id()
     }
 }

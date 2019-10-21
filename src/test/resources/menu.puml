@@ -1,0 +1,12 @@
+digraph Menu {
+
+  S_0_MAIN -> {S_1_GROUPS} [label=groups]
+  S_1_GROUPS -> {S_2_GROUP_ADMIN} [label=my_groups]
+  S_1_GROUPS -> {S_2_GROUPS_ALL} [label=all_groups]
+  S_2_GROUP_ADMIN -> {S_2_GROUP_ADMIN} [label=rename]
+  S_2_GROUPS_ALL -> {S_2_GROUPS_ALL} [label=lunch]
+  S_2_GROUPS_ALL -> {S_3_GROUP_INFO} [label=group_info]
+  S_2_GROUPS_ALL -> {S_2_GROUPS_ALL} [label=leave]
+  S_3_GROUP_INFO -> {}
+
+}

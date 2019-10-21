@@ -12,6 +12,7 @@ import org.eventbot.model.EventStatus.NO_RESPONSE
 import org.eventbot.model.Group
 import org.eventbot.model.Participant
 import org.eventbot.model.UserInfo
+import org.eventbot.navigation.MenuKeyboardComposer
 import org.eventbot.repository.GroupRepository
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
@@ -23,7 +24,7 @@ import java.util.ArrayList
 import java.util.Arrays
 
 @Component
-class KeyboardService(val userService: UserService, val groupRepository: GroupRepository) {
+class KeyboardService(val userService: UserService, val groupRepository: GroupRepository, val menuKeyboardComposer: MenuKeyboardComposer) {
     val startKeyboard: InlineKeyboardMarkup
         get() = getOneRowKeyboard(
                 button(
@@ -112,19 +113,7 @@ class KeyboardService(val userService: UserService, val groupRepository: GroupRe
     }
 
     fun getMenuKeyboard(screen: MenuScreen, context: Map<CallbackParams, Any>): InlineKeyboardMarkup {
-
-        val rows = ArrayList<List<InlineKeyboardButton>>()
-        val menuItem = menuItem(context)
-        val targetScreen = menuItem.getTargetScreen(screen)
-
-        when (targetScreen) {
-            MenuScreen.S_0_MAIN -> addMainButtons(rows)
-            MenuScreen.S_1_GROUPS -> addGroupsButtons(rows)
-            MenuScreen.S_2_GROUP_ADMIN -> addGroupAdminButtons(context, rows)
-            MenuScreen.S_2_GROUPS_ALL -> addGroupListButtons(context, rows)
-        }
-
-        return getMultiRowKeyboard(rows)
+        return getMultiRowKeyboard(menuKeyboardComposer.compose(screen, context))
     }
 
     private fun menuItem(context: Map<CallbackParams, Any>): MenuItem {
@@ -251,7 +240,7 @@ class KeyboardService(val userService: UserService, val groupRepository: GroupRe
         return getMultiRowKeyboard(ArrayList(listOf(row(*buttons))))
     }
 
-    private fun getMultiRowKeyboard(rows: List<List<InlineKeyboardButton>>): InlineKeyboardMarkup {
+    open fun getMultiRowKeyboard(rows: List<List<InlineKeyboardButton>>): InlineKeyboardMarkup {
         return InlineKeyboardMarkup().setKeyboard(rows)
     }
 

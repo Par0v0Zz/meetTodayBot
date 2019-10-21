@@ -9,7 +9,13 @@
 - graph editor https://github.com/graphql-editor/diagram
 - java fx graph editor https://github.com/sirolf2009/fxgraph
 - flow visualization https://github.com/miho/VWorkflows
-- articles
-    - java graphs https://www.baeldung.com/java-graphs
-        - grapht https://jgrapht.org/guide/UserOverview
-            - visualize with graphvis https://www.graphviz.org/
+- grapht https://jgrapht.org/guide/UserOverview
+    - visualize with graphvis https://www.graphviz.org/
+        - examples https://renenyffenegger.ch/notes/tools/Graphviz/examples/index
+    - article: java graphs https://www.baeldung.com/java-graphs
+- IDEA graph plugins
+    - code complexity visualizer CodeMR https://plugins.jetbrains.com/plugin/10811-codemr/
+    - code execution visualizer Flow https://plugins.jetbrains.com/plugin/8362-flow/
+
+## conversation flow
+- dialogflow

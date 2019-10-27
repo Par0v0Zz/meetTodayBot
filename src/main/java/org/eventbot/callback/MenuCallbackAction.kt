@@ -1,7 +1,6 @@
 package org.eventbot.callback
 
 import org.eventbot.CallbackAction
-import org.eventbot.constant.MenuScreen
 import org.eventbot.model.UserInfo
 import org.eventbot.service.MenuService
 import org.springframework.stereotype.Component
@@ -17,21 +16,9 @@ class MenuCallbackAction(
 
         menuService.updateMenu(
                 user.userId,
-                menuScreen(context),
                 context)
 
         return "done"
-    }
-
-    private fun menuScreen(context: Map<CallbackParams, Any>): MenuScreen {
-        var screenId: Int
-        try {
-            screenId = Integer.parseInt(context[CallbackParams.ARG] as String)
-        } catch (e: NumberFormatException) {
-            screenId = 1
-        }
-
-        return MenuScreen.findByKey(screenId)
     }
 
 }

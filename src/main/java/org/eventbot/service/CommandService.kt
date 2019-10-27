@@ -2,6 +2,7 @@ package org.eventbot.service
 
 import org.eventbot.constant.BotCommand
 import org.eventbot.model.UserInfo
+import org.eventbot.navigation.Menu
 import org.eventbot.repository.GroupRepository
 import org.eventbot.repository.UserRepository
 import org.springframework.stereotype.Component
@@ -21,6 +22,7 @@ open class CommandService(
         open var keyboardService: KeyboardService,
         open var groupRepository: GroupRepository,
         open var userRepository: UserRepository,
+        val menu: Menu,
         var text: String = """Hi! 
 I'm very young bot, but I already know some tricks!
 What you can do with me:
@@ -81,7 +83,7 @@ and give good description to attract more people to join.
     private fun sendMainMenu(userId: Long) {
 
         val sendMessage = messageService.getMessageWithKeyboard(userId, "Select group type",
-                keyboardService.getMenuKeyboardScreenOne())
+                menu.getMenuKeyboardScreenOne())
         val sentMessageId = messageService.sendMessage(sendMessage)
 
         val user = userService.findByUserId(userId.toInt())

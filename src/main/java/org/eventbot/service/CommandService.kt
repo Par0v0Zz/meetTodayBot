@@ -68,7 +68,9 @@ and give good description to attract more people to join.
                 BotCommand.SET_LOCATION -> messageService.requestLocation(chatId)
                 BotCommand.VOID -> TODO()
                 BotCommand.GROUPS -> {
-                    sendMainMenu(chatId)
+                    user?.let {
+                        sendMainMenu(chatId, user)
+                    }
                 }
                 BotCommand.PUBLICGROUPS -> messageService.sendMessage(chatId, messageService.publicGroupsInfo())
                 BotCommand.EVENTS -> {
@@ -80,13 +82,13 @@ and give good description to attract more people to join.
         }
     }
 
-    private fun sendMainMenu(userId: Long) {
+    private fun sendMainMenu(chatId: Long, user: UserInfo) {
 
-        val sendMessage = messageService.getMessageWithKeyboard(userId, "Select group type",
-                menu.getMenuKeyboardScreenOne())
+        val sendMessage = messageService.getMessageWithKeyboard(chatId, "Select group type",
+                menu.getMenuKeyboardScreenOne(chatId, user))
         val sentMessageId = messageService.sendMessage(sendMessage)
 
-        val user = userService.findByUserId(userId.toInt())
+        val user = userService.findByUserId(chatId.toInt())
 
         user?.lastMessageId = sentMessageId
     }

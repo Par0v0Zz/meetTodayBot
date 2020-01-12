@@ -5,5 +5,6 @@ enum class CallbackParams {
     CHAT_ID,
     ARG,
     ARG2,
-    MESSAGE_FROM
+    MESSAGE_FROM,
+    USER_ID
 }

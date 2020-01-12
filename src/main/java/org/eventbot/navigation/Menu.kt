@@ -20,62 +20,69 @@ import kotlin.collections.HashMap
 class Menu(val keyboardService: KeyboardService,
            val groupRepository: GroupRepository) {
     private val log = LoggerFactory.getLogger(javaClass)
+    private val chatIdToMenu = HashMap<Long, StateMachine<State, MEvent, SideEffect>>()
 
     init {
         State.S_2_GROUPS_ALL.groupRepository = groupRepository
     }
 
-    private val stateMachine = StateMachine.create<State, MEvent, SideEffect> {
-        initialState(State.S_0_MAIN)
-        state<State.S_0_MAIN> {
-            on<MEvent.OnGroups> {
-                transitionTo(State.S_1_GROUPS, SideEffect.Log)
+    private fun newMenu(userId: Long): StateMachine<State, MEvent, SideEffect> {
+        val newMenu = StateMachine.create<State, MEvent, SideEffect> {
+            initialState(State.S_0_MAIN)
+            state<State.S_0_MAIN> {
+                on<MEvent.OnGroups> {
+                    transitionTo(State.S_1_GROUPS, SideEffect.Log)
+                }
+            }
+            state<State.S_1_GROUPS> {
+                on<MEvent.OnBack> {
+                    transitionTo(State.S_0_MAIN, SideEffect.Log)
+                }
+                on<MEvent.OnAllGroups> {
+                    transitionTo(State.S_2_GROUPS_ALL, SideEffect.Log)
+                }
+                on<MEvent.OnMyGroups> {
+                    transitionTo(State.S_2_GROUP_ADMIN, SideEffect.Log)
+                }
+            }
+            state<State.S_2_GROUPS_ALL> {
+                on<MEvent.OnBack> {
+                    transitionTo(State.S_1_GROUPS, SideEffect.Log)
+                }
+                on<MEvent.OnGroupLunch> {
+                    transitionTo(State.S_2_GROUPS_ALL, SideEffect.Log)
+                }
+                on<MEvent.OnGroupInfo> {
+                    transitionTo(State.S_3_GROUP_INFO, SideEffect.Log)
+                }
+                on<MEvent.OnGroupLeave> {
+                    transitionTo(State.S_2_GROUPS_ALL, SideEffect.Log)
+                }
+            }
+            state<State.S_2_GROUP_ADMIN> {
+                on<MEvent.OnBack> {
+                    transitionTo(State.S_1_GROUPS, SideEffect.Log)
+                }
+                on<MEvent.OnGroupRename> {
+                    transitionTo(State.S_2_GROUP_ADMIN)
+                }
+            }
+            onTransition {
+                val validTransition = it as? StateMachine.Transition.Valid ?: return@onTransition
+                when (validTransition.sideEffect) {
+                    SideEffect.Log -> log.info(validTransition.toString())
+                }
             }
         }
-        state<State.S_1_GROUPS> {
-            on<MEvent.OnBack> {
-                transitionTo(State.S_0_MAIN, SideEffect.Log)
-            }
-            on<MEvent.OnAllGroups> {
-                transitionTo(State.S_2_GROUPS_ALL, SideEffect.Log)
-            }
-            on<MEvent.OnMyGroups> {
-                transitionTo(State.S_2_GROUP_ADMIN, SideEffect.Log)
-            }
-        }
-        state<State.S_2_GROUPS_ALL> {
-            on<MEvent.OnBack> {
-                transitionTo(State.S_1_GROUPS, SideEffect.Log)
-            }
-            on<MEvent.OnGroupLunch> {
-                transitionTo(State.S_2_GROUPS_ALL, SideEffect.Log)
-            }
-            on<MEvent.OnGroupInfo> {
-                transitionTo(State.S_3_GROUP_INFO, SideEffect.Log)
-            }
-            on<MEvent.OnGroupLeave> {
-                transitionTo(State.S_2_GROUPS_ALL, SideEffect.Log)
-            }
-        }
-        state<State.S_2_GROUP_ADMIN> {
-            on<MEvent.OnBack> {
-                transitionTo(State.S_1_GROUPS, SideEffect.Log)
-            }
-            on<MEvent.OnGroupRename> {
-                transitionTo(State.S_2_GROUP_ADMIN)
-            }
-        }
-        onTransition {
-            val validTransition = it as? StateMachine.Transition.Valid ?: return@onTransition
-            when (validTransition.sideEffect) {
-                SideEffect.Log -> log.info(validTransition.toString())
-            }
-        }
+        chatIdToMenu.put(userId, newMenu)
+        return newMenu
     }
 
-    fun getMenuKeyboardScreenOne(): InlineKeyboardMarkup {
+    fun getMenuKeyboardScreenOne(chatId: Long, user: UserInfo): InlineKeyboardMarkup {
         val context = HashMap<CallbackParams, Any>()
 
+        context.put(CallbackParams.CHAT_ID, chatId)
+        context.put(CallbackParams.USER_INFO, user)
         context.put(CallbackParams.ARG, State.S_0_MAIN.javaClass.simpleName)
         context.put(CallbackParams.ARG2, MEvent.OnGroups.javaClass.simpleName)
 
@@ -88,6 +95,8 @@ class Menu(val keyboardService: KeyboardService,
         val event: MEvent? = MEvent.OnGroups.valueOf(menuItem)
 
         event?.let {
+            val chatId = context[CallbackParams.CHAT_ID] as Long
+            val stateMachine = getMenuForChatId(chatId)
             val transition = stateMachine.transition(it)
             val fromState = transition.fromState
             val state = stateMachine.state
@@ -95,6 +104,11 @@ class Menu(val keyboardService: KeyboardService,
         }
 
         return keyboardService.getMultiRowKeyboard(rows)
+    }
+
+    private fun getMenuForChatId(userId: Long): StateMachine<State, MEvent, SideEffect> {
+        val existingMenu = chatIdToMenu[userId]
+        return existingMenu ?: newMenu(userId)
     }
 
     private fun menuItem(context: Map<CallbackParams, Any>): String {

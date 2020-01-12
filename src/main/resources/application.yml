@@ -28,7 +28,7 @@ logging.level:
 #    type.descriptor.sql: trace
 ---
 spring:
-  profiles: test
+  profiles: test_local
 
 ---
 spring:
